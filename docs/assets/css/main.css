@@ -2,7 +2,7 @@
 
 .site-header {
   min-height: 56px;
-  position: relative;
+  /* position은 custom.css에서 sticky로 설정 */
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
 
