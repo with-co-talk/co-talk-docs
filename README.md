@@ -13,6 +13,7 @@ Co-Talk은 **대화에 집중한 커뮤니케이션 플랫폼**입니다.
 ## 문서
 
 - [PRD (Product Requirements Document)](./PRD.md) - 제품 요구사항 문서
+- [Architecture](./ARCHITECTURE.md) - 기술 스택 및 아키텍처 설계 문서
 
 ## 라이선스
 
