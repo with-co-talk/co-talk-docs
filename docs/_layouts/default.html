@@ -79,6 +79,39 @@
       </div>
     </footer>
     
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" aria-label="맨 위로"></button>
+    
+    <!-- Scroll Effects Script -->
+    <script>
+      // 헤더 스크롤 효과
+      const header = document.querySelector('.site-header');
+      const scrollToTopBtn = document.getElementById('scroll-to-top');
+      
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+        
+        // 맨 위로 버튼
+        if (window.scrollY > 400) {
+          scrollToTopBtn.classList.add('visible');
+        } else {
+          scrollToTopBtn.classList.remove('visible');
+        }
+      });
+      
+      // 맨 위로 버튼 클릭
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    </script>
+    
     <!-- Initialize Mermaid -->
     <script>
       mermaid.initialize({ 
