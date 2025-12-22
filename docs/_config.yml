@@ -8,7 +8,7 @@ url: "https://with-co-talk.github.io"
 theme: minima
 
 # 커스텀 설정
-logo: /co-talk/assets/logo.svg
+logo: /assets/logo.svg
 show_downloads: false
 search: true
 
