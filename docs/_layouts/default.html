@@ -19,6 +19,14 @@
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- KaTeX for math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -70,6 +78,45 @@
         </p>
       </div>
     </footer>
+    
+    <!-- Initialize Mermaid -->
+    <script>
+      mermaid.initialize({ 
+        startOnLoad: true,
+        theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+        themeVariables: {
+          primaryColor: '#6366f1',
+          primaryTextColor: '#fff',
+          primaryBorderColor: '#4f46e5',
+          lineColor: '#8b5cf6',
+          secondaryColor: '#8b5cf6',
+          tertiaryColor: '#10b981'
+        }
+      });
+      
+      // Dark mode detection for Mermaid
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        mermaid.initialize({ 
+          theme: e.matches ? 'dark' : 'default'
+        });
+        location.reload();
+      });
+    </script>
+    
+    <!-- Initialize KaTeX -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "\\(", right: "\\)", display: false}
+          ],
+          throwOnError: false
+        });
+      });
+    </script>
   </body>
 </html>
 

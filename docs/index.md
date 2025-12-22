@@ -48,6 +48,13 @@ description: 대화에 집중한 커뮤니케이션 플랫폼 문서
   <p>대규모 트래픽 아키텍처 문서 - 확장 가능한 시스템 설계를 다룹니다.</p>
 </div>
 
+#### 가이드
+
+<div class="doc-card">
+  <h3><i class="fas fa-chart-line"></i> <a href="{{ site.baseurl }}/DIAGRAM-GUIDE">다이어그램 & 수식 가이드 <span class="badge">🎨 NEW</span></a></h3>
+  <p>Mermaid 다이어그램과 수학 공식 작성법 - 플로우차트, 시퀀스, ER 다이어그램 등을 문서에 추가할 수 있습니다.</p>
+</div>
+
 ### 기술 결정 문서 (ADR)
 
 #### 백엔드
