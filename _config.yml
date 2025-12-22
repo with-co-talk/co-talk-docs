@@ -1,0 +1,33 @@
+# Jekyll 설정 파일
+# GitHub Pages에서 docs 폴더를 소스로 사용할 때 필요
+
+title: Co-Talk Documentation
+description: 대화에 집중한 커뮤니케이션 플랫폼 문서
+baseurl: "/co-talk"  # 저장소 이름
+url: "https://with-co-talk.github.io"
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# 네비게이션
+navigation:
+  - title: 홈
+    url: /
+  - title: 제품 문서
+    url: /PRD
+  - title: 기술 스택
+    url: /TECH-STACK
+  - title: 아키텍처
+    url: /ARCHITECTURE
+
+# 마크다운 설정
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+# 기타 설정
+show_excerpts: true
+excerpt_separator: "<!--more-->"
+

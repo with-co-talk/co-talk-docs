@@ -1,0 +1,9 @@
+docs: 문서를 docs/ 폴더로 재구성 및 GitHub Pages 설정 추가
+
+- 모든 문서를 docs/ 폴더로 이동
+- GitHub Pages + Jekyll 설정 추가 (_config.yml)
+- 문서 사이트 홈페이지 생성 (docs/index.md)
+- GitHub Actions 워크플로우 추가 (자동 배포)
+- README.md 문서 링크 업데이트
+- GitHub Pages 설정 가이드 추가
+

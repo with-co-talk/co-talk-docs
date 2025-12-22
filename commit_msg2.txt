@@ -1,0 +1,13 @@
+docs: 기술 스택 및 아키텍처 문서 추가 및 업데이트
+
+- TECH-STACK.md: 최종 기술 스택 결정서 추가 (Java 25, Spring MVC + Virtual Threads, PostgreSQL, Flutter)
+- ARCHITECTURE-SCALE.md: 대규모 트래픽 아키텍처 문서 추가
+- DATABASE-SELECTION.md: PostgreSQL 선택 이유 상세 문서 추가
+- SPRING-MVC-VS-WEBFLUX.md: Spring MVC vs WebFlux 비교 문서 추가
+- REDIS-STREAMS-ORDERING.md: Redis Streams 순서 보장 가이드 추가
+- FRONTEND-PLATFORM-STRATEGY.md: 프론트엔드 플랫폼 전략 문서 추가
+- FLUTTER-VS-REACT-NATIVE.md: Flutter vs React Native 상세 비교 문서 추가
+- PRD.md: 플랫폼 전략 섹션 추가 및 Flutter로 통일
+- ARCHITECTURE.md: 대규모 트래픽 아키텍처 링크 추가
+- README.md: 문서 링크 업데이트
+

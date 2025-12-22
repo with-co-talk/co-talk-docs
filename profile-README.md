@@ -40,3 +40,5 @@ Co-Talk은 **대화에 집중한 커뮤니케이션 플랫폼**입니다. 불필
 **Co-Talk** - Meaningful conversations, meaningful connections.
 
 
+
+
