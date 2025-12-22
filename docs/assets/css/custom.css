@@ -1,0 +1,315 @@
+/* Co-Talk 문서 사이트 커스텀 스타일 */
+
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --secondary-color: #8b5cf6;
+  --text-color: #1f2937;
+  --text-light: #6b7280;
+  --bg-color: #ffffff;
+  --bg-light: #f9fafb;
+  --border-color: #e5e7eb;
+  --accent-color: #10b981;
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: #f9fafb;
+    --text-light: #9ca3af;
+    --bg-color: #111827;
+    --bg-light: #1f2937;
+    --border-color: #374151;
+  }
+}
+
+/* 전체 레이아웃 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.7;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+/* 헤더 스타일 */
+.site-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  border-bottom: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white !important;
+  text-decoration: none;
+}
+
+.site-title:hover {
+  opacity: 0.9;
+}
+
+.site-nav .page-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.site-nav .page-link:hover {
+  opacity: 0.7;
+}
+
+/* 메인 콘텐츠 */
+.page-content {
+  padding: 3rem 0;
+}
+
+.wrapper {
+  max-width: 1200px;
+}
+
+/* 제목 스타일 */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-top: 2.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+}
+
+/* 링크 스타일 */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* 코드 블록 */
+.highlight {
+  background-color: var(--bg-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--primary-color);
+  overflow-x: auto;
+}
+
+code {
+  background-color: var(--bg-light);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--primary-color);
+}
+
+pre {
+  background-color: var(--bg-light);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* 카드 스타일 */
+.doc-card {
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.doc-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doc-card h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.doc-card p {
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+/* 버튼 스타일 */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+  background: #7c3aed;
+}
+
+/* 배지 스타일 */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--accent-color);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+/* 목록 스타일 */
+ul, ol {
+  padding-left: 2rem;
+}
+
+li {
+  margin: 0.5rem 0;
+}
+
+/* 구분선 */
+hr {
+  border: none;
+  border-top: 2px solid var(--border-color);
+  margin: 2rem 0;
+}
+
+/* 푸터 */
+.site-footer {
+  background: var(--bg-light);
+  border-top: 1px solid var(--border-color);
+  padding: 2rem 0;
+  margin-top: 4rem;
+  text-align: center;
+  color: var(--text-light);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .page-content {
+    padding: 2rem 0;
+  }
+}
+
+/* 문서 네비게이션 */
+.doc-nav {
+  background: var(--bg-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+.doc-nav ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.doc-nav li {
+  margin: 0.5rem 0;
+}
+
+.doc-nav a {
+  display: block;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.doc-nav a:hover {
+  background: var(--bg-color);
+}
+
+/* 강조 박스 */
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  border-left: 4px solid;
+}
+
+.alert-info {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border-color: var(--accent-color);
+  color: #166534;
+}
+
+.alert-warning {
+  background: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+/* 테이블 스타일 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+table th,
+table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+table th {
+  background: var(--bg-light);
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+table tr:hover {
+  background: var(--bg-light);
+}
+

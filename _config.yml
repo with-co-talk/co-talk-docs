@@ -6,6 +6,11 @@ description: 대화에 집중한 커뮤니케이션 플랫폼 문서
 baseurl: "/co-talk"  # 저장소 이름
 url: "https://with-co-talk.github.io"
 theme: minima
+
+# 커스텀 설정
+logo: /co-talk/assets/logo.svg
+show_downloads: false
+search: true
 plugins:
   - jekyll-feed
   - jekyll-sitemap
