@@ -1,3 +1,9 @@
+---
+layout: default
+title: PRD (Product Requirements Document)
+description: Co-Talk 제품 요구사항 문서
+---
+
 # Co-Talk PRD (Product Requirements Document)
 ## 버전 1.0 - MVP 초기 버전
 

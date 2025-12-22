@@ -1,3 +1,9 @@
+---
+layout: default
+title: Flutter vs React Native
+description: Flutter 선택 이유 및 상세 비교
+---
+
 # Flutter vs React Native 상세 비교
 ## Co-Talk 프로젝트 모바일 앱 프레임워크 선택
 

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Spring MVC vs WebFlux
+description: Spring MVC 선택 이유 및 비교
+---
+
 # Spring MVC vs WebFlux 선택 가이드
 ## Co-Talk 프로젝트 기술 스택 결정
 

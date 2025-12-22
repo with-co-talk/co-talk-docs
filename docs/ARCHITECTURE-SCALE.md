@@ -1,3 +1,9 @@
+---
+layout: default
+title: Architecture Scale
+description: Co-Talk 대규모 트래픽 아키텍처 문서
+---
+
 # Co-Talk 대규모 트래픽 아키텍처 문서
 ## 버전 1.0 - 확장 가능한 아키텍처
 

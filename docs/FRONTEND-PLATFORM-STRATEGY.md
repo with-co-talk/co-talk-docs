@@ -1,3 +1,9 @@
+---
+layout: default
+title: Frontend Platform Strategy
+description: 프론트엔드 플랫폼 전략
+---
+
 # 프론트엔드 플랫폼 전략
 ## Co-Talk 프로젝트 - React 보안 및 플랫폼 선택
 

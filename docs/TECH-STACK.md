@@ -1,3 +1,9 @@
+---
+layout: default
+title: Tech Stack
+description: Co-Talk 최종 기술 스택 결정서
+---
+
 # Co-Talk 최종 기술 스택 결정서
 ## 대규모 트래픽 성능 목표 기반
 

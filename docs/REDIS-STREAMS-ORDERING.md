@@ -1,3 +1,9 @@
+---
+layout: default
+title: Redis Streams Ordering
+description: 메시지 순서 보장 전략
+---
+
 # Redis Streams 순서 보장 가이드
 ## Co-Talk 프로젝트 메시지 큐 선택
 

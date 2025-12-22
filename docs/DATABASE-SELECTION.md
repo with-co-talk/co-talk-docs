@@ -1,3 +1,9 @@
+---
+layout: default
+title: Database Selection
+description: PostgreSQL 선택 이유 및 비교
+---
+
 # 데이터베이스 선택 가이드
 ## Co-Talk 프로젝트 - PostgreSQL 선택 이유
 

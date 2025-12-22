@@ -1,3 +1,9 @@
+---
+layout: default
+title: Architecture
+description: Co-Talk 아키텍처 설계 문서
+---
+
 # Co-Talk 아키텍처 문서
 ## 버전 1.0 - MVP 초기 버전
 
