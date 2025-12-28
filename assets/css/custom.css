@@ -725,6 +725,14 @@ blockquote p {
   display: none;
 }
 
+/* 햄버거 버튼 라벨 스타일 */
+.site-nav label {
+  display: none;
+  cursor: pointer;
+  z-index: 1002;
+  position: relative;
+}
+
 /* ============================================
    반응형 디자인
    ============================================ */
@@ -790,17 +798,35 @@ blockquote p {
     align-items: flex-start;
   }
   
-  .menu-icon {
-    display: block;
+  /* 모바일에서 햄버거 버튼 표시 */
+  .site-nav label {
+    display: block !important;
     cursor: pointer;
     z-index: 1002;
     position: relative;
     padding: 0.5rem;
     margin-left: auto;
+    order: 2; /* 오른쪽에 배치 */
+  }
+  
+  .menu-icon {
+    display: block !important;
+    cursor: pointer;
+    z-index: 1002;
+    position: relative;
+    padding: 0.5rem;
   }
   
   .menu-icon svg {
     fill: white !important;
+    width: 24px;
+    height: 20px;
+    display: block;
+  }
+  
+  /* 데스크톱 메뉴 링크 숨김 */
+  .site-nav .page-link {
+    display: none !important;
   }
   
   .site-nav .trigger {
@@ -857,6 +883,15 @@ blockquote p {
   
   .page-content .wrapper {
     padding: 1rem;
+  }
+  
+  /* 작은 화면에서도 햄버거 버튼 확실히 표시 */
+  .site-nav label {
+    display: block !important;
+  }
+  
+  .menu-icon {
+    display: block !important;
   }
   
   #scroll-to-top {
