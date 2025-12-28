@@ -41,7 +41,6 @@ plugins:
 
 # 정적 파일 포함
 include:
-  - assets
   - _layouts
 
 # 기타 설정

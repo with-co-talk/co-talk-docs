@@ -37,6 +37,12 @@ jobs:
           source: ./  # 루트에서 빌드 (docs 폴더가 아니라)
           destination: ./_site
       
+      - name: Copy assets to _site
+        run: |
+          if [ -d "assets" ]; then
+            cp -r assets _site/ || xcopy /E /I /Y assets _site\assets
+          fi
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
       
