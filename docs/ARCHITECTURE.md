@@ -146,33 +146,32 @@ description: Co-Talk 아키텍처 설계 문서
 
 ### 2.1 전체 아키텍처 다이어그램
 
-```
-┌─────────────────┐
-│   Web Browser   │
-│   (React App)   │
-└────────┬────────┘
-         │
-         │ HTTPS/WSS
-         │
-┌────────▼─────────────────────────────────────┐
-│         API Gateway / Load Balancer         │
-│              (Nginx / Caddy)                 │
-└────────┬─────────────────────────────────────┘
-         │
-    ┌────┴────┐
-    │         │
-┌───▼───┐ ┌──▼────────┐
-│ REST  │ │ WebSocket │
-│ API   │ │ (Socket.io)│
-│Server │ │  Server   │
-└───┬───┘ └──┬────────┘
-    │        │
-    └───┬────┘
-        │
-┌───────▼────────┐
-│   PostgreSQL   │
-│   Database     │
-└────────────────┘
+```plantuml
+@startuml 시스템 아키텍처
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam component {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+}
+
+actor "Web Browser\n(React App)" as Client
+
+component [API Gateway\nLoad Balancer\n(Nginx/Caddy)] as Gateway
+
+component [REST API Server\n(Spring Boot)] as REST
+component [WebSocket Server\n(Socket.io/Netty)] as WS
+
+database "PostgreSQL\nDatabase" as DB
+
+Client --> Gateway : HTTPS/WSS
+Gateway --> REST : HTTP
+Gateway --> WS : WebSocket
+REST --> DB : SQL
+WS --> DB : SQL
+
+@enduml
 ```
 
 ### 2.2 컴포넌트 구조
@@ -345,22 +344,81 @@ frontend/
 
 ### 3.2 관계도
 
-```
-Users ──┬── Friends (user_id)
-        │
-        ├── Friends (friend_id)
-        │
-        ├── FriendRequests (requester_id)
-        │
-        ├── FriendRequests (receiver_id)
-        │
-        ├── ChatRoomMembers (user_id)
-        │
-        └── Messages (sender_id)
+```plantuml
+@startuml 데이터베이스 ER 다이어그램
+!theme plain
+skinparam linetype ortho
+skinparam packageStyle rectangle
 
-ChatRooms ──┬── ChatRoomMembers (chat_room_id)
-            │
-            └── Messages (chat_room_id)
+entity "Users" as users {
+    * id : UUID <<PK>>
+    --
+    * email : String <<UK>>
+    * password_hash : String
+    * nickname : String <<UK>>
+    avatar_url : String
+    * created_at : Timestamp
+    * updated_at : Timestamp
+}
+
+entity "Friends" as friends {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>>
+    * friend_id : UUID <<FK>>
+    * status : Enum
+    * created_at : Timestamp
+    * updated_at : Timestamp
+}
+
+entity "FriendRequests" as friend_requests {
+    * id : UUID <<PK>>
+    --
+    * requester_id : UUID <<FK>>
+    * receiver_id : UUID <<FK>>
+    * status : Enum
+    * created_at : Timestamp
+    * updated_at : Timestamp
+}
+
+entity "ChatRooms" as chat_rooms {
+    * id : UUID <<PK>>
+    --
+    * type : Enum
+    * created_at : Timestamp
+    * updated_at : Timestamp
+}
+
+entity "ChatRoomMembers" as chat_room_members {
+    * id : UUID <<PK>>
+    --
+    * chat_room_id : UUID <<FK>>
+    * user_id : UUID <<FK>>
+    * joined_at : Timestamp
+    last_read_at : Timestamp
+}
+
+entity "Messages" as messages {
+    * id : UUID <<PK>>
+    --
+    * chat_room_id : UUID <<FK>>
+    * sender_id : UUID <<FK>>
+    * content : Text
+    * message_type : Enum
+    * created_at : Timestamp
+    * updated_at : Timestamp
+}
+
+users ||--o{ friends : "user_id"
+users ||--o{ friends : "friend_id"
+users ||--o{ friend_requests : "requester_id"
+users ||--o{ friend_requests : "receiver_id"
+users ||--o{ chat_room_members : "user_id"
+users ||--o{ messages : "sender_id"
+chat_rooms ||--o{ chat_room_members : "chat_room_id"
+chat_rooms ||--o{ messages : "chat_room_id"
+
+@enduml
 ```
 
 ---

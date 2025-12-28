@@ -6,7 +6,7 @@ description: Mermaid 다이어그램과 수학 공식 사용법
 
 # 다이어그램 & 수식 가이드
 
-이 문서에서는 Mermaid를 사용한 다이어그램과 KaTeX를 사용한 수학 공식 작성법을 설명합니다.
+이 문서에서는 Mermaid, PlantUML을 사용한 다이어그램과 KaTeX를 사용한 수학 공식 작성법을 설명합니다.
 
 ---
 
@@ -193,6 +193,185 @@ pie title 기술 스택 비율
     "Cache (Redis)" : 10
     "Infrastructure (AWS)" : 10
 ```
+
+---
+
+## 🎯 PlantUML 다이어그램
+
+PlantUML은 UML 표준을 따르는 강력한 다이어그램 도구입니다. 특히 아키텍처 다이어그램과 ER 다이어그램에 유용합니다.
+
+### 컴포넌트 다이어그램
+
+```plantuml
+@startuml 컴포넌트 다이어그램
+!theme plain
+skinparam componentStyle rectangle
+
+component [Auth Module] as Auth
+component [User Module] as User
+component [Chat Module] as Chat
+
+database "PostgreSQL" as DB
+
+Auth --> DB
+User --> DB
+Chat --> DB
+
+@enduml
+```
+
+### 배포 다이어그램
+
+```plantuml
+@startuml 배포 다이어그램
+!theme plain
+skinparam node {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+node "API Server" {
+    component [Spring Boot] as App
+}
+
+node "Database Server" {
+    database "PostgreSQL" as DB
+}
+
+node "Cache Server" {
+    database "Redis" as Cache
+}
+
+App --> DB
+App --> Cache
+
+@enduml
+```
+
+### ER 다이어그램
+
+```plantuml
+@startuml ER 다이어그램
+!theme plain
+skinparam linetype ortho
+
+entity "Users" as users {
+    * id : UUID <<PK>>
+    --
+    * email : String <<UK>>
+    * nickname : String
+}
+
+entity "Messages" as messages {
+    * id : UUID <<PK>>
+    --
+    * sender_id : UUID <<FK>>
+    * content : Text
+}
+
+users ||--o{ messages : "sender_id"
+
+@enduml
+```
+
+### 시퀀스 다이어그램
+
+```plantuml
+@startuml 시퀀스 다이어그램
+!theme plain
+
+actor Client
+participant "API Gateway" as Gateway
+participant "Auth Service" as Auth
+database "PostgreSQL" as DB
+
+Client -> Gateway: 로그인 요청
+Gateway -> Auth: 인증 요청
+Auth -> DB: 사용자 조회
+DB --> Auth: 사용자 정보
+Auth --> Gateway: JWT 토큰
+Gateway --> Client: 로그인 성공
+
+@enduml
+```
+
+### 클래스 다이어그램
+
+```plantuml
+@startuml 클래스 다이어그램
+!theme plain
+
+class User {
+    -Long id
+    -String email
+    -String nickname
+    +login()
+    +logout()
+}
+
+class Message {
+    -Long id
+    -Long senderId
+    -String content
+    +send()
+    +read()
+}
+
+class ChatRoom {
+    -Long id
+    -List~Message~ messages
+    +addMessage()
+}
+
+User "1" --> "*" Message : sends
+ChatRoom "1" --> "*" Message : contains
+
+@enduml
+```
+
+### 상태 다이어그램
+
+```plantuml
+@startuml 상태 다이어그램
+!theme plain
+
+[*] --> Offline
+Offline --> Connecting: 로그인
+Connecting --> Online: 연결 성공
+Connecting --> Offline: 연결 실패
+Online --> Chatting: 채팅방 입장
+Chatting --> Online: 채팅방 나가기
+Online --> Offline: 로그아웃
+
+@enduml
+```
+
+### 액티비티 다이어그램
+
+```plantuml
+@startuml 액티비티 다이어그램
+!theme plain
+
+start
+:사용자 로그인;
+if (인증 성공?) then (예)
+  :홈 화면 표시;
+  :채팅방 목록 조회;
+  :메시지 전송;
+else (아니오)
+  :로그인 실패 메시지;
+  stop
+endif
+stop
+
+@enduml
+```
+
+### 사용 팁
+
+- **테마**: `!theme plain`, `!theme aws-orange`, `!theme reddress-darkblue` 등
+- **스타일**: `skinparam` 명령으로 색상, 폰트 등 커스터마이징
+- **다크모드**: 자동으로 다크 테마 적용됨
 
 ---
 

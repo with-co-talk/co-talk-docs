@@ -24,23 +24,37 @@ Co-Talk 프로젝트는 대규모 트래픽(100만+ 동시 접속자)을 목표�
 ### 2.1 모놀리식 아키텍처 (Monolithic Architecture)
 
 #### 구조
-```
-┌─────────────────────────────────┐
-│     Spring Boot Application      │
-│  ┌──────────┐  ┌──────────────┐ │
-│  │   Auth   │  │    User       │ │
-│  └──────────┘  └──────────────┘ │
-│  ┌──────────┐  ┌──────────────┐ │
-│  │  Friend  │  │    Chat      │ │
-│  └──────────┘  └──────────────┘ │
-│  ┌──────────┐  ┌──────────────┐ │
-│  │ Message  │  │  WebSocket   │ │
-│  └──────────┘  └──────────────┘ │
-└─────────────────────────────────┘
-         │
-    ┌────▼────┐
-    │PostgreSQL│
-    └─────────┘
+
+```plantuml
+@startuml 모놀리식 아키텍처
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam component {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+}
+
+package "Spring Boot Application" {
+    component [Auth Module] as Auth
+    component [User Module] as User
+    component [Friend Module] as Friend
+    component [Chat Module] as Chat
+    component [Message Module] as Message
+    component [WebSocket Module] as WebSocket
+}
+
+database "PostgreSQL" as DB {
+}
+
+Auth --> DB
+User --> DB
+Friend --> DB
+Chat --> DB
+Message --> DB
+WebSocket --> DB
+
+@enduml
 ```
 
 #### 장점
@@ -92,31 +106,46 @@ Co-Talk 프로젝트는 대규모 트래픽(100만+ 동시 접속자)을 목표�
 ### 2.2 마이크로서비스 아키텍처 (MSA)
 
 #### 구조
-```
-┌─────────────────────────────────────┐
-│      API Gateway (Kong)             │
-└────────┬────────────────────────────┘
-         │
-    ┌────┴─────────────────────┐
-    │                          │
-┌───▼──────┐  ┌──────────────┐ │
-│   Auth   │  │    User      │ │
-│  Service │  │   Service    │ │
-└──────────┘  └──────────────┘ │
-┌──────────┐  ┌──────────────┐ │
-│  Friend  │  │    Chat      │ │
-│  Service │  │   Service    │ │
-└──────────┘  └──────────────┘ │
-┌──────────┐  ┌──────────────┐ │
-│ Message  │  │  WebSocket   │ │
-│  Service │  │   Gateway    │ │
-└──────────┘  └──────────────┘ │
-    │                          │
-    └────┬─────────────────────┘
-         │
-    ┌────▼────┐
-    │PostgreSQL│
-    └─────────┘
+
+```plantuml
+@startuml 마이크로서비스 아키텍처
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam component {
+    BackgroundColor #FFF3E0
+    BorderColor #F57C00
+}
+
+component [API Gateway\n(Kong)] as Gateway
+
+package "Microservices" {
+    component [Auth Service] as Auth
+    component [User Service] as User
+    component [Friend Service] as Friend
+    component [Chat Service] as Chat
+    component [Message Service] as Message
+    component [WebSocket Gateway] as WebSocket
+}
+
+database "PostgreSQL" as DB {
+}
+
+Gateway --> Auth
+Gateway --> User
+Gateway --> Friend
+Gateway --> Chat
+Gateway --> Message
+Gateway --> WebSocket
+
+Auth --> DB
+User --> DB
+Friend --> DB
+Chat --> DB
+Message --> DB
+WebSocket --> DB
+
+@enduml
 ```
 
 #### 장점

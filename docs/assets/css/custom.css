@@ -931,6 +931,27 @@ blockquote p {
 }
 
 /* ============================================
+   PlantUML 다이어그램 스타일
+   ============================================ */
+
+.plantuml-container {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  text-align: center;
+  overflow: auto;
+}
+
+.plantuml-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* ============================================
    KaTeX 수학 공식 스타일
    ============================================ */
 
