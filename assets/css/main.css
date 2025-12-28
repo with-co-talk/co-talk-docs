@@ -15,22 +15,17 @@
 }
 
 .site-nav {
-  float: right;
-  line-height: 56px;
+  float: none; /* custom.css에서 flex로 관리 */
+  line-height: normal; /* custom.css에서 관리 */
 }
 
 .site-nav .menu-icon {
   display: none;
 }
 
+/* 데스크톱 메뉴 링크는 custom.css에서 관리 */
 .site-nav .page-link {
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
-  margin-left: 20px;
-}
-
-.site-nav .page-link:not(:last-child) {
-  margin-right: 20px;
+  /* custom.css에서 스타일 정의 */
 }
 
 .page-content {

@@ -166,6 +166,8 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
+  float: none !important; /* main.css의 float 제거 */
+  line-height: normal !important; /* main.css의 line-height 제거 */
 }
 
 .site-nav .page-link {
@@ -207,6 +209,25 @@ body {
   min-height: calc(100vh - 200px);
   animation: fadeIn 0.6s ease;
   background: var(--bg-secondary);
+}
+
+/* Jekyll 메타데이터 숨김 (작성일, 수정일, 작성자, 수정자) */
+.post-meta,
+.page-meta,
+.post-header,
+.post-content .post-meta,
+.post-date,
+.post-author,
+.author,
+.date {
+  display: none !important;
+}
+
+/* Minima 테마의 post-meta 숨김 */
+.post-meta-description,
+.post-meta,
+header.post-header {
+  display: none !important;
 }
 
 .page-content .wrapper {
@@ -736,15 +757,7 @@ blockquote p {
 
 /* 데스크톱: 일반 메뉴 링크 표시 */
 .site-nav .page-link {
-  display: inline-block;
-}
-
-/* 햄버거 버튼 라벨 스타일 */
-.site-nav label {
-  display: none;
-  cursor: pointer;
-  z-index: 1002;
-  position: relative;
+  display: inline-block !important;
 }
 
 /* ============================================
