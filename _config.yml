@@ -3,36 +3,45 @@
 
 title: Co-Talk Documentation
 description: 대화에 집중한 커뮤니케이션 플랫폼 문서
-baseurl: "/co-talk"  # 저장소 이름
+# baseurl 제거: 루트 레포지토리에서 서빙하므로 baseurl 불필요
+baseurl: ""  # 루트에서 서빙
 url: "https://with-co-talk.github.io"
 theme: minima
 
 # 커스텀 설정
-logo: /co-talk/assets/logo.svg
+logo: /assets/logo.svg
 show_downloads: false
 search: true
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
 
 # 네비게이션
-navigation:
-  - title: 홈
-    url: /
-  - title: 제품 문서
-    url: /PRD
-  - title: 기술 스택
-    url: /TECH-STACK
-  - title: 아키텍처
-    url: /ARCHITECTURE
+header_pages:
+  - index.md
+  - PRD.md
+  - TECH-STACK.md
+  - ARCHITECTURE.md
 
 # 마크다운 설정
 markdown: kramdown
 kramdown:
   input: GFM
   hard_wrap: false
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+
+# 플러그인
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
 
 # 기타 설정
 show_excerpts: true
 excerpt_separator: "<!--more-->"
 
+# 색상 테마
+color_scheme: dark

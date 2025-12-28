@@ -1,39 +1,71 @@
-# Co-Talk
+# Co-Talk Documentation
 
-대화에 집중한 커뮤니케이션 플랫폼
+Co-Talk 프로젝트의 모든 문서를 관리하는 레포지토리입니다.
 
-## 개요
+## 📖 문서 사이트
 
-Co-Talk은 **대화에 집중한 커뮤니케이션 플랫폼**입니다.
+**문서 사이트**: https://with-co-talk.github.io/
 
-- **Couple Talk**: 커플 간의 깊은 대화와 소통
-- **Community Talk**: 공통 관심사를 가진 집단 간의 의미 있는 대화
-- **Co-work Talk**: 협업과 업무를 위한 효율적인 커뮤니케이션
+GitHub Pages를 통해 자동으로 배포됩니다.
 
-## 📚 문서
+## 📁 문서 구조
 
-> **📖 [문서 사이트 보기](https://with-co-talk.github.io/)** (GitHub Pages)
+- **제품 문서**: PRD, 사용자 가이드 등
+- **기술 문서**: Tech Stack, Architecture 등
+- **기술 결정 문서 (ADR)**: 각종 기술 선택 근거
 
-문서는 별도 레포지토리에서 관리됩니다:
-- **문서 레포지토리**: [co-talk-docs](https://github.com/with-co-talk/co-talk-docs)
-- **문서 사이트**: https://with-co-talk.github.io/
+## 🚀 로컬에서 실행
 
-### 주요 문서
-- [PRD (Product Requirements Document)](https://with-co-talk.github.io/PRD) - 제품 요구사항 문서
-- [Tech Stack](https://with-co-talk.github.io/TECH-STACK) - 최종 기술 스택 결정서 (성능 목표 기반) ⭐
-- [Architecture](https://with-co-talk.github.io/ARCHITECTURE) - 기술 스택 및 아키텍처 설계 문서 (MVP)
-- [Architecture Scale](https://with-co-talk.github.io/ARCHITECTURE-SCALE) - 대규모 트래픽 아키텍처 문서
+### Jekyll 설치
 
-### 기술 결정 문서 (ADR)
-- [MSA vs 모놀리식](https://with-co-talk.github.io/MSA-VS-MONOLITH) - 아키텍처 패턴 선택
-- [레포지토리 전략](https://with-co-talk.github.io/REPOSITORY-STRATEGY) - 레포지토리 구조 결정
-- [Database Selection](https://with-co-talk.github.io/DATABASE-SELECTION) - PostgreSQL 선택 이유
-- [Spring MVC vs WebFlux](https://with-co-talk.github.io/SPRING-MVC-VS-WEBFLUX) - Spring MVC 선택 이유
-- [Frontend Platform Strategy](https://with-co-talk.github.io/FRONTEND-PLATFORM-STRATEGY) - 프론트엔드 플랫폼 전략
-- [Flutter vs React Native](https://with-co-talk.github.io/FLUTTER-VS-REACT-NATIVE) - Flutter 선택 이유
-- [Redis Streams Ordering](https://with-co-talk.github.io/REDIS-STREAMS-ORDERING) - Redis Streams 순서 보장 가이드
+```bash
+# Ruby 설치 (이미 설치되어 있다면 생략)
+# Windows: https://rubyinstaller.org/
 
-## 라이선스
+# Jekyll 및 의존성 설치
+gem install bundler
+bundle install
+```
 
-[라이선스 정보 추가 예정]
+### 로컬 서버 실행
 
+```bash
+bundle exec jekyll serve
+```
+
+브라우저에서 http://localhost:4000 접속
+
+## 📝 문서 작성 가이드
+
+1. 마크다운 파일 작성
+2. Jekyll front matter 추가:
+   ```yaml
+   ---
+   layout: default
+   title: 문서 제목
+   description: 문서 설명
+   ---
+   ```
+3. 커밋 및 푸시
+4. GitHub Pages 자동 배포
+
+## 🎨 다이어그램 지원
+
+- **Mermaid**: 플로우차트, 시퀀스 다이어그램 등
+- **PlantUML**: UML 표준 다이어그램 (클래스, 컴포넌트, 배포 등)
+- **KaTeX**: 수학 공식
+
+자세한 사용법은 [다이어그램 가이드](./DIAGRAM-GUIDE.md) 참조
+
+## 📚 주요 문서
+
+- [PRD](./PRD.md) - 제품 요구사항 문서
+- [Tech Stack](./TECH-STACK.md) - 최종 기술 스택 결정서 ⭐
+- [Architecture](./ARCHITECTURE.md) - 아키텍처 설계 문서
+- [Architecture Scale](./ARCHITECTURE-SCALE.md) - 대규모 트래픽 아키텍처
+- [MSA vs 모놀리식](./MSA-VS-MONOLITH.md) - 아키텍처 패턴 선택
+- [레포지토리 전략](./REPOSITORY-STRATEGY.md) - 레포지토리 구조 결정
+
+## 🔗 관련 레포지토리
+
+- **프로젝트 레포지토리**: [co-talk](https://github.com/with-co-talk/co-talk)

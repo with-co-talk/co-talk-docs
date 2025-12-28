@@ -1,5 +1,5 @@
 # GitHub Pages 자동 배포 워크플로우
-# docs 폴더의 내용을 GitHub Pages로 배포합니다
+# 문서 레포지토리용 (루트에서 빌드)
 
 name: Deploy GitHub Pages
 
@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -36,7 +34,7 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./docs
+          source: ./  # 루트에서 빌드 (docs 폴더가 아니라)
           destination: ./_site
       
       - name: Upload artifact
@@ -45,12 +43,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-
-
-
-
-
-
-
 
