@@ -57,6 +57,13 @@ description: 대화에 집중한 커뮤니케이션 플랫폼 문서
 
 ### 기술 결정 문서 (ADR)
 
+#### 아키텍처
+
+<div class="doc-card">
+  <h3><i class="fas fa-sitemap"></i> <a href="{{ site.baseurl }}/MSA-VS-MONOLITH">MSA vs 모놀리식 아키텍처</a></h3>
+  <p>아키텍처 패턴 선택 - 모듈형 모놀리식에서 점진적 MSA 전환 전략을 설명합니다.</p>
+</div>
+
 #### 백엔드
 
 <div class="doc-card">
