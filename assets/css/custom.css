@@ -725,6 +725,20 @@ blockquote p {
   display: none;
 }
 
+/* 데스크톱: 햄버거 버튼과 트리거 메뉴 숨김 */
+.site-nav label {
+  display: none;
+}
+
+.site-nav .trigger {
+  display: none;
+}
+
+/* 데스크톱: 일반 메뉴 링크 표시 */
+.site-nav .page-link {
+  display: inline-block;
+}
+
 /* 햄버거 버튼 라벨 스타일 */
 .site-nav label {
   display: none;
@@ -799,7 +813,12 @@ blockquote p {
     align-items: center;
   }
   
-  /* 모바일에서 햄버거 버튼 표시 - 메뉴 링크와 조화로운 스타일 */
+  /* 모바일: 데스크톱 메뉴 링크 숨김 */
+  .site-nav .page-link {
+    display: none !important;
+  }
+  
+  /* 모바일: 햄버거 버튼 표시 - 메뉴 링크와 조화로운 스타일 */
   .site-nav label {
     display: block !important;
     cursor: pointer;
@@ -843,11 +862,6 @@ blockquote p {
   /* 햄버거 버튼 클릭 시 회전 효과 */
   .nav-trigger:checked ~ label .menu-icon svg {
     transform: rotate(90deg);
-  }
-  
-  /* 데스크톱 메뉴 링크 숨김 */
-  .site-nav .page-link {
-    display: none !important;
   }
   
   .site-nav .trigger {
