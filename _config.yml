@@ -39,6 +39,11 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
 
+# 정적 파일 포함
+include:
+  - assets
+  - _layouts
+
 # 기타 설정
 show_excerpts: true
 excerpt_separator: "<!--more-->"
