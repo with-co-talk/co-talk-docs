@@ -175,6 +175,7 @@ end note
 
 ### ER 다이어그램
 
+**Mermaid 버전:**
 ```mermaid
 erDiagram
     USER ||--o{ FRIEND_REQUEST : sends
@@ -218,6 +219,72 @@ erDiagram
         bigint chat_room_id FK
         bigint user_id FK
     }
+```
+
+**PlantUML 버전 (더 표준적이고 상세한 표현):**
+```plantuml
+@startuml ER 다이어그램
+!theme plain
+skinparam linetype ortho
+skinparam roundcorner 10
+
+entity "Users" as users {
+    * id : UUID <<PK>>
+    --
+    * email : VARCHAR(255) <<UK>>
+    * password_hash : VARCHAR(255)
+    * nickname : VARCHAR(50) <<UK>>
+    * created_at : TIMESTAMP
+    * updated_at : TIMESTAMP
+}
+
+entity "FriendRequests" as friend_requests {
+    * id : UUID <<PK>>
+    --
+    * requester_id : UUID <<FK>>
+    * receiver_id : UUID <<FK>>
+    * status : ENUM('pending', 'accepted', 'rejected')
+    * created_at : TIMESTAMP
+    * updated_at : TIMESTAMP
+}
+
+entity "ChatRooms" as chat_rooms {
+    * id : UUID <<PK>>
+    --
+    * type : ENUM('direct', 'group')
+    * created_at : TIMESTAMP
+    * updated_at : TIMESTAMP
+}
+
+entity "ChatRoomMembers" as chat_room_members {
+    * id : UUID <<PK>>
+    --
+    * chat_room_id : UUID <<FK>>
+    * user_id : UUID <<FK>>
+    * joined_at : TIMESTAMP
+    * last_read_at : TIMESTAMP
+}
+
+entity "Messages" as messages {
+    * id : UUID <<PK>>
+    --
+    * chat_room_id : UUID <<FK>>
+    * sender_id : UUID <<FK>>
+    * content : TEXT
+    * message_type : ENUM('text', 'image', 'file')
+    * is_read : BOOLEAN
+    * created_at : TIMESTAMP
+    * updated_at : TIMESTAMP
+}
+
+users ||--o{ friend_requests : "requester_id"
+users ||--o{ friend_requests : "receiver_id"
+users ||--o{ chat_room_members : "user_id"
+users ||--o{ messages : "sender_id"
+chat_rooms ||--o{ chat_room_members : "chat_room_id"
+chat_rooms ||--o{ messages : "chat_room_id"
+
+@enduml
 ```
 
 ### 상태 다이어그램
