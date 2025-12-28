@@ -26,6 +26,7 @@ graph TD
 
 ### 시퀀스 다이어그램
 
+**Mermaid 버전:**
 ```mermaid
 sequenceDiagram
     participant Client
@@ -42,8 +43,45 @@ sequenceDiagram
     Redis->>Client: 실시간 메시지 전달
 ```
 
+**PlantUML 버전 (더 표준적이고 깔끔함):**
+```plantuml
+@startuml 메시지 전송 시퀀스
+!theme plain
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxmessagesize 60
+
+actor Client
+participant "API Server" as Server
+database "PostgreSQL" as DB
+database "Redis" as Redis
+
+Client -> Server: 메시지 전송 요청
+activate Server
+
+Server -> DB: 메시지 저장
+activate DB
+DB --> Server: 저장 완료
+deactivate DB
+
+Server -> Redis: 메시지 큐에 추가
+activate Redis
+Redis --> Server: 큐 추가 완료
+deactivate Redis
+
+Server --> Client: 전송 성공 응답
+deactivate Server
+
+Redis -> Client: 실시간 메시지 전달
+activate Client
+deactivate Client
+
+@enduml
+```
+
 ### 클래스 다이어그램
 
+**Mermaid 버전:**
 ```mermaid
 classDiagram
     class User {
@@ -74,6 +112,65 @@ classDiagram
     User "1" --> "*" Message : sends
     ChatRoom "1" --> "*" Message : contains
     User "2" --> "1" ChatRoom : participates
+```
+
+**PlantUML 버전 (UML 표준, 더 상세한 표현 가능):**
+```plantuml
+@startuml 클래스 다이어그램
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+class User {
+    -Long id
+    -String email
+    -String nickname
+    -String passwordHash
+    -LocalDateTime createdAt
+    --
+    +login() : JwtToken
+    +logout() : void
+    +updateProfile() : void
+}
+
+class Message {
+    -Long id
+    -Long senderId
+    -Long receiverId
+    -String content
+    -LocalDateTime createdAt
+    -boolean isRead
+    --
+    +send() : void
+    +markAsRead() : void
+}
+
+class ChatRoom {
+    -Long id
+    -Long user1Id
+    -Long user2Id
+    -List~Message~ messages
+    -LocalDateTime createdAt
+    --
+    +addMessage(Message) : void
+    +getMessages() : List~Message~
+}
+
+User "1" --> "*" Message : sends
+ChatRoom "1" --> "*" Message : contains
+User "2" --> "1" ChatRoom : participates
+
+note right of User
+  사용자 인증 및
+  프로필 관리
+end note
+
+note right of Message
+  메시지 전송 및
+  읽음 상태 관리
+end note
+
+@enduml
 ```
 
 ### ER 다이어그램

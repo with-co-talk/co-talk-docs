@@ -30,6 +30,54 @@
     
     <!-- PlantUML for UML diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
+    <script>
+      // PlantUML 렌더링 함수
+      function renderPlantUML() {
+        // 모든 pre 코드 블록 찾기
+        const codeBlocks = document.querySelectorAll('pre code');
+        codeBlocks.forEach(block => {
+          const code = block.textContent.trim();
+          // PlantUML 코드 블록인지 확인 (@startuml로 시작)
+          if (code.startsWith('@startuml') || code.startsWith('@start')) {
+            try {
+              const encoded = plantumlEncoder.encode(code);
+              const img = document.createElement('img');
+              // HTTPS PlantUML 서버 사용
+              img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded;
+              img.alt = 'PlantUML Diagram';
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              img.loading = 'lazy';
+              
+              // 에러 처리
+              img.onerror = function() {
+                console.error('PlantUML 렌더링 실패:', code.substring(0, 50));
+                this.style.display = 'none';
+              };
+              
+              const container = document.createElement('div');
+              container.className = 'plantuml-container';
+              container.appendChild(img);
+              
+              // pre 요소를 container로 교체
+              const preElement = block.closest('pre');
+              if (preElement) {
+                preElement.replaceWith(container);
+              }
+            } catch (e) {
+              console.error('PlantUML 인코딩 실패:', e);
+            }
+          }
+        });
+      }
+      
+      // 페이지 로드 후 PlantUML 렌더링
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderPlantUML);
+      } else {
+        renderPlantUML();
+      }
+    </script>
   </head>
   <body>
     <header class="site-header">
