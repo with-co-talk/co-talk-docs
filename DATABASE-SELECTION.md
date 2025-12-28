@@ -473,9 +473,3 @@ CREATE TABLE friends (
 - PostgreSQL: 주 데이터 저장소
 - Redis: 캐싱, Pub/Sub, 세션
 - Elasticsearch: 검색 (향후)
-
----
-
-**문서 작성일**: 2024년
-**최종 수정일**: 2024년
-

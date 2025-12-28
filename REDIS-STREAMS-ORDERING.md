@@ -385,9 +385,3 @@ List<MapRecord<String, Object, Object>> pendingMessages =
 **최종 권장:**
 - 초기: Redis Streams (채팅방별 Stream)
 - 확장 시: 필요하면 Kafka로 전환 (하지만 Redis Streams도 충분할 수 있음)
-
----
-
-**문서 작성일**: 2024년
-**최종 수정일**: 2024년
-
