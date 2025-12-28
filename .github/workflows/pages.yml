@@ -40,7 +40,7 @@ jobs:
       - name: Copy assets to _site
         run: |
           if [ -d "assets" ]; then
-            cp -r assets _site/ || xcopy /E /I /Y assets _site\assets
+            cp -r assets _site/
           fi
       
       - name: Upload artifact
