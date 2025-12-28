@@ -3,7 +3,8 @@
 
 title: Co-Talk Documentation
 description: 대화에 집중한 커뮤니케이션 플랫폼 문서
-baseurl: "/co-talk"  # 저장소 이름
+# baseurl 제거: 루트 레포지토리에서 서빙하므로 baseurl 불필요
+baseurl: ""  # 루트에서 서빙
 url: "https://with-co-talk.github.io"
 theme: minima
 
