@@ -597,8 +597,11 @@ INCLUDE (friend_id);
 - 데이터베이스 샤딩
 - Kafka 도입
 - Elasticsearch 도입
-- 마이크로서비스 전환
+- 마이크로서비스 전환 (모듈형 모놀리식 → MSA)
 - Flutter Web/Desktop 지원 (선택)
+
+**참고 문서:**
+- [MSA vs 모놀리식 아키텍처 결정](./MSA-VS-MONOLITH.md)
 
 ---
 
