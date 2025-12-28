@@ -779,9 +779,10 @@ blockquote p {
   }
   
   .site-header .wrapper {
-    flex-direction: column;
-    gap: 0;
-    align-items: flex-start;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
   }
   
   .site-header {
@@ -791,22 +792,34 @@ blockquote p {
   }
   
   .site-nav {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    justify-content: flex-end;
     flex-wrap: nowrap;
     position: relative;
-    align-items: flex-start;
+    align-items: center;
   }
   
-  /* 모바일에서 햄버거 버튼 표시 */
+  /* 모바일에서 햄버거 버튼 표시 - 메뉴 링크와 조화로운 스타일 */
   .site-nav label {
     display: block !important;
     cursor: pointer;
     z-index: 1002;
     position: relative;
-    padding: 0.5rem;
     margin-left: auto;
     order: 2; /* 오른쪽에 배치 */
+    /* 메뉴 링크와 비슷한 스타일 */
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+  
+  .site-nav label:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
   }
   
   .menu-icon {
@@ -814,7 +827,9 @@ blockquote p {
     cursor: pointer;
     z-index: 1002;
     position: relative;
-    padding: 0.5rem;
+    padding: 0;
+    width: 24px;
+    height: 20px;
   }
   
   .menu-icon svg {
@@ -822,6 +837,12 @@ blockquote p {
     width: 24px;
     height: 20px;
     display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  /* 햄버거 버튼 클릭 시 회전 효과 */
+  .nav-trigger:checked ~ label .menu-icon svg {
+    transform: rotate(90deg);
   }
   
   /* 데스크톱 메뉴 링크 숨김 */
@@ -830,49 +851,55 @@ blockquote p {
   }
   
   .site-nav .trigger {
-    display: none;
     /* 닫혔을 때 완전히 숨기고 공간 차지하지 않음 */
+    display: block;
     position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     opacity: 0;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+    transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
     margin: 0;
     padding: 0;
+    width: 100%;
+    pointer-events: none;
   }
   
   .nav-trigger:checked ~ .trigger {
-    display: block;
-    position: relative;
     opacity: 1;
     max-height: 500px;
-    background: rgba(255, 255, 255, 0.98);
     padding: 1rem;
+    background: rgba(255, 255, 255, 0.98);
     border-radius: 12px;
     box-shadow: var(--shadow-md);
     margin-top: 1rem;
     /* 헤더 위에 확실히 표시되도록 */
     z-index: 1001;
     backdrop-filter: blur(20px);
-    width: 100%;
+    pointer-events: auto;
   }
   
   /* 모바일 메뉴 내부 링크 스타일 */
   .nav-trigger:checked ~ .trigger .page-link {
-    display: block;
+    display: block !important;
     padding: 0.75rem 1rem;
     margin: 0.5rem 0;
     color: var(--text-primary) !important;
-    background: transparent;
-    border: none;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: 8px;
     text-align: left;
+    transition: all 0.3s ease;
   }
   
   .nav-trigger:checked ~ .trigger .page-link:hover {
-    background: var(--bg-hover);
-    color: var(--primary) !important;
+    background: var(--primary);
+    color: white !important;
+    border-color: var(--primary);
     transform: translateX(5px);
+    box-shadow: var(--shadow-md);
   }
 }
 
