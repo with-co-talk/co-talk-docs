@@ -37,11 +37,15 @@ jobs:
           source: ./  # 루트에서 빌드 (docs 폴더가 아니라)
           destination: ./_site
       
-      - name: Copy assets to _site
+      - name: Ensure assets are copied
+        shell: bash
         run: |
-          if [ -d "assets" ]; then
+          # Jekyll이 assets를 복사하지 않았을 경우를 대비
+          if [ -d "assets" ] && [ ! -d "_site/assets" ]; then
+            echo "Copying assets folder..."
             cp -r assets _site/
           fi
+          ls -la _site/ | head -20
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
