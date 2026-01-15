@@ -12,13 +12,14 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
     
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <!-- KaTeX for math -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -27,141 +28,99 @@
     
     <!-- Mermaid for diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    
-    <!-- PlantUML for UML diagrams -->
-    <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
-    <script>
-      // PlantUML 렌더링 함수
-      function renderPlantUML() {
-        // 모든 pre 코드 블록 찾기
-        const codeBlocks = document.querySelectorAll('pre code');
-        codeBlocks.forEach(block => {
-          const code = block.textContent.trim();
-          // PlantUML 코드 블록인지 확인 (@startuml로 시작)
-          if (code.startsWith('@startuml') || code.startsWith('@start')) {
-            try {
-              const encoded = plantumlEncoder.encode(code);
-              const img = document.createElement('img');
-              // HTTPS PlantUML 서버 사용
-              img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded;
-              img.alt = 'PlantUML Diagram';
-              img.style.maxWidth = '100%';
-              img.style.height = 'auto';
-              img.loading = 'lazy';
-              
-              // 에러 처리
-              img.onerror = function() {
-                console.error('PlantUML 렌더링 실패:', code.substring(0, 50));
-                this.style.display = 'none';
-              };
-              
-              const container = document.createElement('div');
-              container.className = 'plantuml-container';
-              container.appendChild(img);
-              
-              // pre 요소를 container로 교체
-              const preElement = block.closest('pre');
-              if (preElement) {
-                preElement.replaceWith(container);
-              }
-            } catch (e) {
-              console.error('PlantUML 인코딩 실패:', e);
-            }
-          }
-        });
-      }
-      
-      // 페이지 로드 후 PlantUML 렌더링
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', renderPlantUML);
-      } else {
-        renderPlantUML();
-      }
-    </script>
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrapper">
-        <a class="site-title" href="{{ site.baseurl }}/">
-          <i class="fas fa-comments"></i> {{ site.title }}
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="{{ site.baseurl }}/" class="logo">
+          <span class="logo-icon">💬</span>
+          <span class="logo-text">Co-Talk</span>
         </a>
-        <nav class="site-nav">
-          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-          <label for="nav-trigger">
-            <span class="menu-icon">
-              <svg viewBox="0 0 18 15" width="18px" height="15px">
-                <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0h15.032C17.335,0,18,0.665,18,1.484L18,1.484z"/>
-                <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
-                <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
-              </svg>
-            </span>
-          </label>
-          <div class="trigger">
-            {% for page_path in site.header_pages %}
-              {% assign my_page = site.pages | where: "path", page_path | first %}
-              {% if my_page.title %}
-                <a class="page-link" href="{{ site.baseurl }}{{ my_page.url }}">{{ my_page.title | escape }}</a>
-              {% endif %}
-            {% endfor %}
-          </div>
-        </nav>
       </div>
-    </header>
-
-    <main class="page-content">
-      <div class="wrapper">
-        {{ content }}
-      </div>
-    </main>
-
-    <footer class="site-footer">
-      <div class="wrapper">
-        <p>
-          <i class="fas fa-heart" style="color: #e91e63;"></i>
-          Made with love by <strong>Co-Talk Team</strong>
-        </p>
-        <p>
-          <small>
-            <a href="https://github.com/with-co-talk/co-talk-docs">
-              <i class="fab fa-github"></i> View on GitHub
-            </a>
-          </small>
-        </p>
-      </div>
-    </footer>
-    
-    <!-- Scroll to Top Button -->
-    <button id="scroll-to-top" aria-label="맨 위로">
-      <i class="fas fa-arrow-up"></i>
-    </button>
-    
-    <!-- Scroll Effects Script -->
-    <script>
-      // 헤더 스크롤 효과
-      const header = document.querySelector('.site-header');
-      const scrollToTopBtn = document.getElementById('scroll-to-top');
       
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 100) {
-          header.classList.add('scrolled');
-        } else {
-          header.classList.remove('scrolled');
-        }
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">시작하기</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/" class="nav-link {% if page.url == '/' %}active{% endif %}">홈</a></li>
+            <li><a href="{{ site.baseurl }}/PRD" class="nav-link {% if page.url == '/PRD.html' or page.url == '/PRD' %}active{% endif %}">PRD</a></li>
+          </ul>
+        </div>
         
-        // 맨 위로 버튼
-        if (window.scrollY > 400) {
-          scrollToTopBtn.classList.add('visible');
-        } else {
-          scrollToTopBtn.classList.remove('visible');
-        }
+        <div class="nav-section">
+          <div class="nav-section-title">기술 문서</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/TECH-STACK" class="nav-link {% if page.url == '/TECH-STACK.html' or page.url == '/TECH-STACK' %}active{% endif %}">Tech Stack</a></li>
+            <li><a href="{{ site.baseurl }}/ARCHITECTURE" class="nav-link {% if page.url == '/ARCHITECTURE.html' or page.url == '/ARCHITECTURE' %}active{% endif %}">Architecture</a></li>
+            <li><a href="{{ site.baseurl }}/ARCHITECTURE-SCALE" class="nav-link {% if page.url == '/ARCHITECTURE-SCALE.html' or page.url == '/ARCHITECTURE-SCALE' %}active{% endif %}">Architecture Scale</a></li>
+            <li><a href="{{ site.baseurl }}/DIAGRAM-GUIDE" class="nav-link {% if page.url == '/DIAGRAM-GUIDE.html' or page.url == '/DIAGRAM-GUIDE' %}active{% endif %}">다이어그램 가이드</a></li>
+          </ul>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">기술 결정 (ADR)</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/MSA-VS-MONOLITH" class="nav-link {% if page.url == '/MSA-VS-MONOLITH.html' or page.url == '/MSA-VS-MONOLITH' %}active{% endif %}">MSA vs Monolith</a></li>
+            <li><a href="{{ site.baseurl }}/DATABASE-SELECTION" class="nav-link {% if page.url == '/DATABASE-SELECTION.html' or page.url == '/DATABASE-SELECTION' %}active{% endif %}">Database Selection</a></li>
+            <li><a href="{{ site.baseurl }}/SPRING-MVC-VS-WEBFLUX" class="nav-link {% if page.url == '/SPRING-MVC-VS-WEBFLUX.html' or page.url == '/SPRING-MVC-VS-WEBFLUX' %}active{% endif %}">Spring MVC vs WebFlux</a></li>
+            <li><a href="{{ site.baseurl }}/REDIS-STREAMS-ORDERING" class="nav-link {% if page.url == '/REDIS-STREAMS-ORDERING.html' or page.url == '/REDIS-STREAMS-ORDERING' %}active{% endif %}">Redis Streams Ordering</a></li>
+          </ul>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">프론트엔드</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/FRONTEND-PLATFORM-STRATEGY" class="nav-link {% if page.url == '/FRONTEND-PLATFORM-STRATEGY.html' or page.url == '/FRONTEND-PLATFORM-STRATEGY' %}active{% endif %}">Platform Strategy</a></li>
+            <li><a href="{{ site.baseurl }}/FLUTTER-VS-REACT-NATIVE" class="nav-link {% if page.url == '/FLUTTER-VS-REACT-NATIVE.html' or page.url == '/FLUTTER-VS-REACT-NATIVE' %}active{% endif %}">Flutter vs React Native</a></li>
+          </ul>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="https://github.com/with-co-talk/co-talk" class="github-link" target="_blank">
+          GitHub
+        </a>
+      </div>
+    </aside>
+    
+    <!-- 모바일 헤더 -->
+    <header class="mobile-header">
+      <button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <a href="{{ site.baseurl }}/" class="mobile-logo">Co-Talk</a>
+    </header>
+    
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+      <article class="content">
+        {{ content }}
+      </article>
+    </main>
+    
+    <!-- 모바일 오버레이 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Scripts -->
+    <script>
+      // 모바일 메뉴 토글
+      const menuToggle = document.getElementById('menuToggle');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+        document.body.classList.toggle('sidebar-open');
       });
       
-      // 맨 위로 버튼 클릭
-      scrollToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.classList.remove('sidebar-open');
       });
     </script>
     
@@ -169,23 +128,15 @@
     <script>
       mermaid.initialize({ 
         startOnLoad: true,
-        theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+        theme: 'neutral',
         themeVariables: {
-          primaryColor: '#6366f1',
-          primaryTextColor: '#fff',
-          primaryBorderColor: '#4f46e5',
-          lineColor: '#8b5cf6',
-          secondaryColor: '#8b5cf6',
-          tertiaryColor: '#10b981'
+          primaryColor: '#e8e8e8',
+          primaryTextColor: '#333',
+          primaryBorderColor: '#ccc',
+          lineColor: '#666',
+          secondaryColor: '#f4f4f4',
+          tertiaryColor: '#fff'
         }
-      });
-      
-      // Dark mode detection for Mermaid
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        mermaid.initialize({ 
-          theme: e.matches ? 'dark' : 'default'
-        });
-        location.reload();
       });
     </script>
     
@@ -203,35 +154,5 @@
         });
       });
     </script>
-    
-    <!-- Initialize PlantUML -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        // PlantUML 코드 블록 찾기
-        document.querySelectorAll('pre code.language-plantuml, pre code.language-puml').forEach(function(block) {
-          const plantumlCode = block.textContent;
-          const encoded = plantumlEncoder.encode(plantumlCode);
-          const img = document.createElement('img');
-          img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded;
-          img.alt = 'PlantUML Diagram';
-          img.style.maxWidth = '100%';
-          img.style.height = 'auto';
-          img.style.display = 'block';
-          img.style.margin = '2rem auto';
-          
-          // 다크모드 감지
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded + '?theme=dark';
-          }
-          
-          const container = document.createElement('div');
-          container.className = 'plantuml-container';
-          container.appendChild(img);
-          
-          block.parentElement.parentElement.replaceWith(container);
-        });
-      });
-    </script>
   </body>
 </html>
-
