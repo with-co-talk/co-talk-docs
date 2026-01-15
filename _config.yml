@@ -24,6 +24,7 @@ markdown: kramdown
 kramdown:
   input: GFM
   hard_wrap: false
+  gfm_quirks: [paragraph_end]
   syntax_highlighter: rouge
   syntax_highlighter_opts:
     block:
