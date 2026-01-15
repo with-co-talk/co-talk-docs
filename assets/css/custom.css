@@ -351,7 +351,7 @@ pre code {
   white-space: pre;
 }
 
-/* Rouge 코드 하이라이터 - 라인 넘버 포함 스타일 */
+/* Rouge 코드 하이라이터 */
 .highlight {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -362,81 +362,80 @@ pre code {
 
 .highlight pre {
   margin: 0;
-  padding: 0;
+  padding: 16px;
   border: none;
   background: transparent;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-/* 라인 넘버 테이블 스타일 */
+/* 인라인 라인 넘버 스타일 */
+.highlight .lineno {
+  display: inline-block;
+  width: 32px;
+  margin-right: 16px;
+  padding-right: 12px;
+  text-align: right;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-color);
+  user-select: none;
+}
+
+/* 테이블 방식 라인 넘버 (fallback) */
 .highlight table {
   margin: 0;
   border: none;
   border-collapse: collapse;
-  width: auto;
-  min-width: 100%;
-  table-layout: auto;
-}
-
-.highlight table tbody {
-  display: table-row-group;
-}
-
-.highlight table tr {
-  display: table-row;
-}
-
-.highlight table tr:hover td {
-  background: var(--bg-hover);
+  width: 100%;
 }
 
 .highlight table td {
-  display: table-cell;
   padding: 0;
   border: none;
   vertical-align: top;
 }
 
-/* 라인 넘버 영역 */
-.highlight .gutter,
-.highlight .rouge-gutter,
-.highlight td.gutter {
-  width: 1px;
-  min-width: 40px;
-  padding: 12px 0;
+.highlight table tr:hover td {
+  background: transparent;
+}
+
+.highlight td.gutter,
+.highlight td.rouge-gutter {
+  width: 50px;
+  padding: 16px 0;
   text-align: right;
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0, 0, 0, 0.02);
   border-right: 1px solid var(--border-color);
   user-select: none;
 }
 
-.highlight .gutter pre,
-.highlight .rouge-gutter pre,
-.highlight td.gutter pre {
-  padding: 0 12px;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-/* 코드 영역 */
-.highlight .code,
-.highlight .rouge-code,
-.highlight td.code {
-  padding: 12px 16px;
-  width: 100%;
-}
-
-.highlight .code pre,
-.highlight .rouge-code pre,
-.highlight td.code pre {
-  padding: 0;
+.highlight td.gutter pre,
+.highlight td.rouge-gutter pre {
   margin: 0;
+  padding: 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.highlight td.code,
+.highlight td.rouge-code {
+  padding: 16px;
+}
+
+.highlight td.code pre,
+.highlight td.rouge-code pre {
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 @media (prefers-color-scheme: dark) {
-  .highlight .gutter,
-  .highlight .rouge-gutter,
-  .highlight td.gutter {
-    background: rgba(255, 255, 255, 0.03);
+  .highlight td.gutter,
+  .highlight td.rouge-gutter {
+    background: rgba(255, 255, 255, 0.02);
   }
 }
 
