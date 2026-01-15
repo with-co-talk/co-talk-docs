@@ -28,6 +28,9 @@
     
     <!-- Mermaid for diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    
+    <!-- PlantUML -->
+    <script src="https://cdn.jsdelivr.net/npm/plantuml-encoder@1.4.0/dist/plantuml-encoder.min.js"></script>
   </head>
   <body>
     <!-- 사이드바 -->
@@ -151,6 +154,55 @@
             {left: "\\(", right: "\\)", display: false}
           ],
           throwOnError: false
+        });
+      });
+    </script>
+    
+    <!-- Initialize PlantUML -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // PlantUML 코드 블록 찾기 (language-plantuml 또는 language-puml)
+        document.querySelectorAll('pre code.language-plantuml, pre code.language-puml').forEach(function(block) {
+          try {
+            const plantumlCode = block.textContent;
+            const encoded = plantumlEncoder.encode(plantumlCode);
+            const img = document.createElement('img');
+            img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded;
+            img.alt = 'PlantUML Diagram';
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+            
+            const container = document.createElement('div');
+            container.className = 'plantuml-diagram';
+            container.appendChild(img);
+            
+            block.closest('pre').replaceWith(container);
+          } catch (e) {
+            console.error('PlantUML 렌더링 실패:', e);
+          }
+        });
+        
+        // @startuml로 시작하는 코드 블록도 처리
+        document.querySelectorAll('pre code').forEach(function(block) {
+          const code = block.textContent.trim();
+          if (code.startsWith('@startuml') || code.startsWith('@startmindmap') || code.startsWith('@startwbs')) {
+            try {
+              const encoded = plantumlEncoder.encode(code);
+              const img = document.createElement('img');
+              img.src = 'https://www.plantuml.com/plantuml/svg/' + encoded;
+              img.alt = 'PlantUML Diagram';
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              
+              const container = document.createElement('div');
+              container.className = 'plantuml-diagram';
+              container.appendChild(img);
+              
+              block.closest('pre').replaceWith(container);
+            } catch (e) {
+              console.error('PlantUML 렌더링 실패:', e);
+            }
+          }
         });
       });
     </script>

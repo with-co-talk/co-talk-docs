@@ -529,6 +529,25 @@ hr {
 }
 
 /* ============================================
+   PlantUML 다이어그램
+   ============================================ */
+
+.plantuml-diagram {
+  margin: 1.5em 0;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.plantuml-diagram img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================
    반응형
    ============================================ */
 
