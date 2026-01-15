@@ -347,6 +347,74 @@ pre code {
   padding: 0;
   font-size: 13px;
   line-height: 1.6;
+  display: block;
+  white-space: pre;
+}
+
+/* Rouge 코드 하이라이터 - 라인 넘버 제거 */
+.highlight {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 1.5em 0;
+  overflow-x: auto;
+}
+
+.highlight pre {
+  margin: 0;
+  border: none;
+  background: transparent;
+}
+
+.highlight table {
+  margin: 0;
+  border: none;
+  width: 100%;
+}
+
+.highlight table td {
+  padding: 0;
+  border: none;
+}
+
+.highlight table pre {
+  margin: 0;
+  padding: 16px;
+}
+
+/* 라인 넘버 숨김 */
+.highlight .lineno,
+.highlight .gl,
+.highlight .gutter,
+.highlight td.gutter,
+.highlight .rouge-gutter {
+  display: none !important;
+}
+
+.highlight .rouge-code,
+.highlight td.code,
+.highlight .code {
+  padding: 16px !important;
+  width: 100%;
+}
+
+.highlight .rouge-code pre,
+.highlight td.code pre {
+  padding: 0 !important;
+  margin: 0;
+}
+
+/* 코드 블록 내 테이블 리셋 */
+.highlight table,
+.highlight tbody,
+.highlight tr,
+.highlight td {
+  display: block;
+  background: transparent;
+}
+
+.highlight table tr:hover td {
+  background: transparent;
 }
 
 /* ============================================

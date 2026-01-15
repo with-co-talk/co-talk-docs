@@ -3,22 +3,21 @@
 
 title: Co-Talk Documentation
 description: 대화에 집중한 커뮤니케이션 플랫폼 문서
-# baseurl: 레포지토리 이름 (co-talk-docs)
-baseurl: "/co-talk-docs"
-url: "https://with-co-talk.github.io"
 theme: minima
-
-# 커스텀 설정
-logo: /assets/logo.svg
-show_downloads: false
-search: true
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
 
 # 네비게이션
-header_pages:
-  - index.md
-  - PRD.md
-  - TECH-STACK.md
-  - ARCHITECTURE.md
+navigation:
+  - title: 홈
+    url: /
+  - title: 제품 문서
+    url: /PRD
+  - title: 기술 스택
+    url: /TECH-STACK
+  - title: 아키텍처
+    url: /ARCHITECTURE
 
 # 마크다운 설정
 markdown: kramdown
@@ -27,29 +26,10 @@ kramdown:
   hard_wrap: false
   syntax_highlighter: rouge
   syntax_highlighter_opts:
-    css_class: 'highlight'
-    span:
-      line_numbers: false
     block:
-      line_numbers: true
-
-# 플러그인
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-
-# 정적 파일 포함
-include:
-  - _layouts
-  - assets
-
-# Jekyll이 처리하지 않을 파일 (없음)
-exclude: []
+      line_numbers: false
 
 # 기타 설정
 show_excerpts: true
 excerpt_separator: "<!--more-->"
 
-# 색상 테마
-color_scheme: dark
