@@ -47,35 +47,50 @@
           <div class="nav-section-title">시작하기</div>
           <ul class="nav-list">
             <li><a href="{{ site.baseurl }}/" class="nav-link {% if page.url == '/' %}active{% endif %}">홈</a></li>
-            <li><a href="{{ site.baseurl }}/PRD" class="nav-link {% if page.url == '/PRD.html' or page.url == '/PRD' %}active{% endif %}">PRD</a></li>
+            <li><a href="{{ site.baseurl }}/PRD" class="nav-link {% if page.url contains '/PRD' %}active{% endif %}">PRD</a></li>
           </ul>
         </div>
-        
+
         <div class="nav-section">
-          <div class="nav-section-title">기술 문서</div>
+          <div class="nav-section-title">아키텍처</div>
           <ul class="nav-list">
-            <li><a href="{{ site.baseurl }}/TECH-STACK" class="nav-link {% if page.url == '/TECH-STACK.html' or page.url == '/TECH-STACK' %}active{% endif %}">Tech Stack</a></li>
-            <li><a href="{{ site.baseurl }}/ARCHITECTURE" class="nav-link {% if page.url == '/ARCHITECTURE.html' or page.url == '/ARCHITECTURE' %}active{% endif %}">Architecture</a></li>
-            <li><a href="{{ site.baseurl }}/ARCHITECTURE-SCALE" class="nav-link {% if page.url == '/ARCHITECTURE-SCALE.html' or page.url == '/ARCHITECTURE-SCALE' %}active{% endif %}">Architecture Scale</a></li>
-            <li><a href="{{ site.baseurl }}/DIAGRAM-GUIDE" class="nav-link {% if page.url == '/DIAGRAM-GUIDE.html' or page.url == '/DIAGRAM-GUIDE' %}active{% endif %}">다이어그램 가이드</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/" class="nav-link {% if page.url == '/architecture/' or page.url == '/architecture/index.html' %}active{% endif %}">개요</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/backend" class="nav-link {% if page.url contains '/architecture/backend' %}active{% endif %}">└ Backend</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/frontend" class="nav-link {% if page.url contains '/architecture/frontend' %}active{% endif %}">└ Frontend</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/database" class="nav-link {% if page.url contains '/architecture/database' %}active{% endif %}">└ Database</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/api" class="nav-link {% if page.url contains '/architecture/api' %}active{% endif %}">└ API</a></li>
+            <li><a href="{{ site.baseurl }}/architecture/infrastructure" class="nav-link {% if page.url contains '/architecture/infrastructure' %}active{% endif %}">└ Infrastructure</a></li>
+            <li><a href="{{ site.baseurl }}/ARCHITECTURE-SCALE" class="nav-link {% if page.url contains '/ARCHITECTURE-SCALE' %}active{% endif %}">Scale (대규모)</a></li>
           </ul>
         </div>
-        
+
+        <div class="nav-section">
+          <div class="nav-section-title">기술 스택</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/tech-stack/" class="nav-link {% if page.url == '/tech-stack/' or page.url == '/tech-stack/index.html' %}active{% endif %}">개요</a></li>
+            <li><a href="{{ site.baseurl }}/tech-stack/backend" class="nav-link {% if page.url contains '/tech-stack/backend' %}active{% endif %}">└ Backend</a></li>
+            <li><a href="{{ site.baseurl }}/tech-stack/frontend" class="nav-link {% if page.url contains '/tech-stack/frontend' %}active{% endif %}">└ Frontend</a></li>
+            <li><a href="{{ site.baseurl }}/tech-stack/infrastructure" class="nav-link {% if page.url contains '/tech-stack/infrastructure' %}active{% endif %}">└ Infrastructure</a></li>
+          </ul>
+        </div>
+
         <div class="nav-section">
           <div class="nav-section-title">기술 결정 (ADR)</div>
           <ul class="nav-list">
-            <li><a href="{{ site.baseurl }}/MSA-VS-MONOLITH" class="nav-link {% if page.url == '/MSA-VS-MONOLITH.html' or page.url == '/MSA-VS-MONOLITH' %}active{% endif %}">MSA vs Monolith</a></li>
-            <li><a href="{{ site.baseurl }}/DATABASE-SELECTION" class="nav-link {% if page.url == '/DATABASE-SELECTION.html' or page.url == '/DATABASE-SELECTION' %}active{% endif %}">Database Selection</a></li>
-            <li><a href="{{ site.baseurl }}/SPRING-MVC-VS-WEBFLUX" class="nav-link {% if page.url == '/SPRING-MVC-VS-WEBFLUX.html' or page.url == '/SPRING-MVC-VS-WEBFLUX' %}active{% endif %}">Spring MVC vs WebFlux</a></li>
-            <li><a href="{{ site.baseurl }}/REDIS-STREAMS-ORDERING" class="nav-link {% if page.url == '/REDIS-STREAMS-ORDERING.html' or page.url == '/REDIS-STREAMS-ORDERING' %}active{% endif %}">Redis Streams Ordering</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/" class="nav-link {% if page.url == '/decisions/' or page.url == '/decisions/index.html' %}active{% endif %}">목록</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/msa-vs-monolith" class="nav-link {% if page.url contains '/decisions/msa-vs-monolith' %}active{% endif %}">└ MSA vs Monolith</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/database-selection" class="nav-link {% if page.url contains '/decisions/database-selection' %}active{% endif %}">└ Database</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/spring-mvc-vs-webflux" class="nav-link {% if page.url contains '/decisions/spring-mvc-vs-webflux' %}active{% endif %}">└ MVC vs WebFlux</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/redis-streams-ordering" class="nav-link {% if page.url contains '/decisions/redis-streams-ordering' %}active{% endif %}">└ Redis Streams</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/frontend-platform-strategy" class="nav-link {% if page.url contains '/decisions/frontend-platform-strategy' %}active{% endif %}">└ Platform Strategy</a></li>
+            <li><a href="{{ site.baseurl }}/decisions/flutter-vs-react-native" class="nav-link {% if page.url contains '/decisions/flutter-vs-react-native' %}active{% endif %}">└ Flutter vs RN</a></li>
           </ul>
         </div>
-        
+
         <div class="nav-section">
-          <div class="nav-section-title">프론트엔드</div>
+          <div class="nav-section-title">가이드</div>
           <ul class="nav-list">
-            <li><a href="{{ site.baseurl }}/FRONTEND-PLATFORM-STRATEGY" class="nav-link {% if page.url == '/FRONTEND-PLATFORM-STRATEGY.html' or page.url == '/FRONTEND-PLATFORM-STRATEGY' %}active{% endif %}">Platform Strategy</a></li>
-            <li><a href="{{ site.baseurl }}/FLUTTER-VS-REACT-NATIVE" class="nav-link {% if page.url == '/FLUTTER-VS-REACT-NATIVE.html' or page.url == '/FLUTTER-VS-REACT-NATIVE' %}active{% endif %}">Flutter vs React Native</a></li>
+            <li><a href="{{ site.baseurl }}/guides/diagram-guide" class="nav-link {% if page.url contains '/guides/diagram-guide' %}active{% endif %}">다이어그램 가이드</a></li>
           </ul>
         </div>
       </nav>
