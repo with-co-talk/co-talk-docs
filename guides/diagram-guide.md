@@ -6,11 +6,21 @@ description: Mermaid 다이어그램과 수학 공식 사용법
 
 # 다이어그램 & 수식 가이드
 
-이 문서에서는 Mermaid, PlantUML을 사용한 다이어그램과 KaTeX를 사용한 수학 공식 작성법을 설명합니다.
+[← 가이드 목록](./index)
+
+Mermaid, PlantUML을 사용한 다이어그램과 KaTeX를 사용한 수학 공식 작성법입니다.
 
 ---
 
-## 🎨 Mermaid 다이어그램
+## 목차
+
+- [Mermaid 다이어그램](#-mermaid-다이어그램)
+- [PlantUML 다이어그램](#-plantuml-다이어그램)
+- [KaTeX 수학 공식](#-katex-수학-공식)
+
+---
+
+## Mermaid 다이어그램
 
 ### 플로우차트
 

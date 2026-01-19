@@ -12,12 +12,14 @@ plugins:
 navigation:
   - title: 홈
     url: /
-  - title: 제품 문서
+  - title: PRD
     url: /PRD
-  - title: 기술 스택
-    url: /TECH-STACK
   - title: 아키텍처
-    url: /ARCHITECTURE
+    url: /architecture/
+  - title: 기술 스택
+    url: /tech-stack/
+  - title: 기술 결정
+    url: /decisions/
 
 # 마크다운 설정
 markdown: kramdown
