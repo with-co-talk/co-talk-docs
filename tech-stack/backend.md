@@ -2,6 +2,7 @@
 layout: default
 title: Backend Tech Stack
 description: Co-Talk 백엔드 기술 스택
+permalink: /tech-stack/backend
 ---
 
 # 백엔드 기술 스택

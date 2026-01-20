@@ -2,6 +2,7 @@
 layout: default
 title: 다이어그램 & 수식 가이드
 description: Mermaid 다이어그램과 수학 공식 사용법
+permalink: /guides/diagram-guide
 ---
 
 # 다이어그램 & 수식 가이드

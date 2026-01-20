@@ -2,6 +2,7 @@
 layout: default
 title: Infrastructure
 description: Co-Talk 인프라 및 배포
+permalink: /architecture/infrastructure
 ---
 
 # 인프라 및 배포

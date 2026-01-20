@@ -2,6 +2,7 @@
 layout: default
 title: Frontend Architecture
 description: Co-Talk 프론트엔드 아키텍처
+permalink: /architecture/frontend
 ---
 
 # 프론트엔드 아키텍처

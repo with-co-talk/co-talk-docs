@@ -2,6 +2,7 @@
 layout: default
 title: Architecture
 description: Co-Talk 시스템 아키텍처 개요
+permalink: /architecture/
 ---
 
 # Co-Talk 아키텍처

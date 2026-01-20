@@ -2,6 +2,7 @@
 layout: default
 title: Flutter vs React Native
 description: Flutter 선택 이유 및 상세 비교
+permalink: /decisions/flutter-vs-react-native
 ---
 
 # Flutter vs React Native 상세 비교

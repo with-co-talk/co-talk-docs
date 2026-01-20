@@ -2,6 +2,7 @@
 layout: default
 title: Tech Stack
 description: Co-Talk 최종 기술 스택 결정서
+permalink: /tech-stack/
 ---
 
 # 기술 스택 결정서

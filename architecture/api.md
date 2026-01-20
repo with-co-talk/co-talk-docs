@@ -2,6 +2,7 @@
 layout: default
 title: API Design
 description: Co-Talk API 설계
+permalink: /architecture/api
 ---
 
 # API 설계

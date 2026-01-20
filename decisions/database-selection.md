@@ -2,6 +2,7 @@
 layout: default
 title: Database Selection
 description: PostgreSQL 선택 이유 및 비교
+permalink: /decisions/database-selection
 ---
 
 # 데이터베이스 선택 가이드

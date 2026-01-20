@@ -2,6 +2,7 @@
 layout: default
 title: Spring MVC vs WebFlux
 description: Spring MVC 선택 이유 및 비교
+permalink: /decisions/spring-mvc-vs-webflux
 ---
 
 # Spring MVC vs WebFlux 선택 가이드

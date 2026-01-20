@@ -2,6 +2,7 @@
 layout: default
 title: Backend Architecture
 description: Co-Talk 백엔드 아키텍처
+permalink: /architecture/backend
 ---
 
 # 백엔드 아키텍처

@@ -2,6 +2,7 @@
 layout: default
 title: Architecture Decision Records
 description: Co-Talk 기술 결정 문서 (ADR)
+permalink: /decisions/
 ---
 
 # 기술 결정 문서 (ADR)

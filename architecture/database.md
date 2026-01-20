@@ -2,6 +2,7 @@
 layout: default
 title: Database Design
 description: Co-Talk 데이터베이스 설계
+permalink: /architecture/database
 ---
 
 # 데이터베이스 설계

@@ -2,6 +2,7 @@
 layout: default
 title: Infrastructure Tech Stack
 description: Co-Talk 인프라 기술 스택
+permalink: /tech-stack/infrastructure
 ---
 
 # 인프라 기술 스택

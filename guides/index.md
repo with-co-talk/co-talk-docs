@@ -2,6 +2,7 @@
 layout: default
 title: Guides
 description: Co-Talk 가이드 문서
+permalink: /guides/
 ---
 
 # 가이드 문서

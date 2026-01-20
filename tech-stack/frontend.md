@@ -2,6 +2,7 @@
 layout: default
 title: Frontend Tech Stack
 description: Co-Talk 프론트엔드 기술 스택
+permalink: /tech-stack/frontend
 ---
 
 # 프론트엔드 기술 스택
