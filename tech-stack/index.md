@@ -15,9 +15,9 @@ has_children: true
 
 | 문서 | 설명 |
 |------|------|
-| [백엔드 기술](./backend) | Java 25, Spring Boot, Netty, PostgreSQL |
-| [프론트엔드 기술](./frontend) | React, Flutter, Zustand |
-| [인프라 기술](./infrastructure) | Kubernetes, Redis, Elasticsearch |
+| [백엔드 기술](./backend) | Java 25, Spring Boot 3.5.6, PostgreSQL 16, Redis 7 |
+| [프론트엔드 기술](./frontend) | Flutter 3.8+, BLoC/Cubit, Drift, Dio |
+| [인프라 기술](./infrastructure) | Docker Compose, Nginx, Prometheus, Grafana |
 
 ---
 
@@ -47,24 +47,24 @@ has_children: true
 ## 기술 스택 요약
 
 ### 백엔드
-- **언어**: Java 25 LTS
-- **프레임워크**: Spring Boot 3.5+
-- **실시간 통신**: Netty (WebSocket)
-- **데이터베이스**: PostgreSQL 15+ (Primary + Read Replicas)
-- **ORM**: Spring Data JPA + QueryDSL
-- **캐싱**: Redis Cluster 7.0+
-- **메시지 큐**: Redis Streams → Kafka
-- **검색**: Elasticsearch 8.0+
+- **언어**: Java 25 (Virtual Threads, JEP 491)
+- **프레임워크**: Spring Boot 3.5.6 (Spring MVC)
+- **실시간 통신**: STOMP over WebSocket + Redis Pub/Sub
+- **데이터베이스**: PostgreSQL 16
+- **ORM**: Spring Data JPA + QueryDSL 5.1.0
+- **캐싱**: Redis 7 (RedisCacheManager)
+- **보안**: AES-256 메시지 암호화, JWT, Bucket4j Rate Limiting
 
 ### 프론트엔드
-- **웹 (MVP)**: React 18.3+ + TypeScript
-- **모바일 (확장)**: Flutter 3.0+
+- **프레임워크**: Flutter 3.8+ (Dart SDK ^3.8.1)
+- **상태 관리**: BLoC/Cubit (flutter_bloc)
+- **플랫폼**: Android, iOS, macOS, Windows, Linux
 
-### 인프라
-- **컨테이너**: Docker + Kubernetes (AWS EKS)
-- **로드 밸런서**: AWS ALB/NLB
-- **API Gateway**: Kong
-- **모니터링**: Prometheus + Grafana
+### 인프라 (현재)
+- **오케스트레이션**: Docker Compose on Synology NAS (8GB)
+- **리버스 프록시**: Nginx (Rate Limiting, SSL)
+- **배포**: 카나리아 롤링 (3개 인스턴스)
+- **모니터링**: Prometheus + Grafana + Loki + Zipkin
 
 ---
 
@@ -72,10 +72,10 @@ has_children: true
 
 | Phase | 기간 | 내용 |
 |-------|------|------|
-| **Phase 1: MVP** | 1-3개월 | Spring Boot REST, 기본 WebSocket, 단일 DB |
-| **Phase 2: 최적화** | 3-6개월 | Netty WebSocket, Redis Cluster, Read Replica |
-| **Phase 3: 확장** | 6-12개월 | Kubernetes, API Gateway, Flutter 앱 |
-| **Phase 4: 대규모** | 12개월+ | DB 샤딩, Kafka, Elasticsearch, MSA 전환 |
+| **Phase 1: MVP** | ✅ 완료 | Spring Boot REST + STOMP WebSocket, PostgreSQL, Flutter 앱 |
+| **Phase 2: 프로덕션** | ✅ 완료 | 3-인스턴스 카나리아 배포, Redis Pub/Sub, 모니터링 스택 |
+| **Phase 3: 확장** | 향후 | Kubernetes 전환, Read Replica, API Gateway |
+| **Phase 4: 대규모** | 향후 | DB 샤딩, Kafka, Elasticsearch, MSA 전환 |
 
 ---
 

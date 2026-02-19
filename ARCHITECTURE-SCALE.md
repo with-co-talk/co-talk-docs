@@ -552,10 +552,10 @@ ON friends(user_id, status);
 - **로깅**: ELK Stack 또는 Loki
 
 ### 프론트엔드
-- **프레임워크**: React + TypeScript
-- **상태 관리**: Zustand / Redux Toolkit
-- **실시간 통신**: Socket.io-client
-- **배포**: Vercel / CloudFlare Pages
+- **프레임워크**: Flutter 3.8+ (Dart SDK ^3.8.1)
+- **상태 관리**: BLoC/Cubit (flutter_bloc)
+- **실시간 통신**: STOMP over WebSocket (stomp_dart_client)
+- **플랫폼**: Android, iOS, macOS, Windows, Linux
 
 ---
 
