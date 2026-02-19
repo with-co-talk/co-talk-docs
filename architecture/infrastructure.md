@@ -1,174 +1,303 @@
 ---
 layout: default
 title: Infrastructure
-description: Co-Talk 인프라 및 배포
-permalink: /architecture/infrastructure
+parent: Architecture
+nav_order: 5
 ---
 
-# 인프라 및 배포
+# Infrastructure & Deployment
 
-[← 아키텍처 개요](./index)
-
----
-
-## 목차
-
-- [컨테이너화](#컨테이너화)
-- [호스팅](#호스팅)
-- [보안](#보안)
-- [성능 최적화](#성능-최적화)
-- [모니터링](#모니터링)
-- [배포 전략](#배포-전략)
-- [개발 환경](#개발-환경)
+[← Architecture Overview](./index)
 
 ---
 
-## 컨테이너화
+## Table of Contents
 
-### Docker
-- 개발 환경 통일
-- 배포 간소화
-
-### CI/CD (선택)
-- **GitHub Actions** - 자동 빌드 및 배포
-
----
-
-## 호스팅 (초기)
-
-### 백엔드
-- **Railway**, **Render**, **Fly.io** (권장 - 간단한 배포)
-- 또는 **AWS EC2**, **DigitalOcean**
-
-### 프론트엔드
-- **Vercel**, **Netlify** (권장 - 무료 티어)
-
-### 데이터베이스
-- **Supabase** (PostgreSQL 호스팅, 무료 티어)
-- 또는 **Railway**, **Render** (PostgreSQL 포함)
+- [Production Environment](#production-environment)
+- [Architecture Diagram](#architecture-diagram)
+- [Deployment Strategy](#deployment-strategy)
+- [Nginx Configuration](#nginx-configuration)
+- [Monitoring Stack](#monitoring-stack)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Backup Strategy](#backup-strategy)
+- [Development Environment](#development-environment)
 
 ---
 
-## 보안
+## Production Environment
 
-### 인증 및 인가
-- JWT 토큰 기반 인증
-- 토큰 만료 시간 설정 (예: 7일)
-- Refresh Token 고려 (향후)
-- Socket.io 연결 시 JWT 토큰 검증
+### Platform
 
-### 데이터 보안
-- 비밀번호 bcrypt 해싱 (salt rounds: 10)
-- HTTPS/WSS 통신 필수
-- SQL Injection 방지 (ORM 사용)
-- XSS 방지 (입력 검증 및 이스케이프)
-- CSRF 방지 (SameSite 쿠키)
+| Item | Detail |
+|------|--------|
+| **Host** | Synology NAS (8GB RAM) |
+| **Orchestration** | Docker Compose |
+| **Strategy** | Canary Rolling Deployment (3 instances) |
+| **Reverse Proxy** | Nginx (round-robin + passive health check) |
+| **Graceful Shutdown** | 30-second timeout |
+| **CI/CD** | GitHub Actions → GHCR → deploy.sh |
 
-### 입력 검증
-- 모든 사용자 입력 검증
-- 이메일 형식 검증
-- 비밀번호 강도 검증
-- 메시지 길이 제한 (1000자)
+### Service Composition
 
----
+| Service | Image | Memory | Role |
+|---------|-------|--------|------|
+| app-1, app-2, app-3 | GHCR co-talk | 768MB each | Spring Boot 3.5.6 |
+| nginx | nginx:alpine | - | Reverse proxy, rate limiting, SSL |
+| postgres | postgres:16-alpine | 512MB | Primary database |
+| redis | redis:7-alpine | 128MB | Cache, Pub/Sub, rate limiting |
+| minio | minio/minio | - | S3-compatible file storage |
+| prometheus | prom/prometheus | - | Metrics collection (5s scrape) |
+| grafana | grafana/grafana:10.2.2 | - | Dashboards |
+| loki | grafana/loki:2.9.2 | - | Log aggregation |
+| promtail | grafana/promtail:2.9.2 | - | Docker log collection |
+| zipkin | openzipkin/zipkin | - | Distributed tracing |
+| alertmanager | prom/alertmanager | - | Slack/email alerts |
 
-## 성능 최적화
-
-### 데이터베이스
-- **인덱스 최적화**
-  - Users: email, nickname
-  - Messages: (chat_room_id, created_at)
-  - Friends: (user_id, friend_id)
-- 페이지네이션 (메시지 히스토리)
-- 쿼리 최적화 (N+1 문제 방지)
-
-### 실시간 통신
-- Socket.io Room 활용 (채팅방별)
-- 메시지 큐잉 (고부하 시)
-- 연결 풀 관리
-
-### 프론트엔드
-- 메시지 가상화 (Virtual Scrolling)
-- 이미지 지연 로딩 (향후)
-- 코드 스플리팅
-- 메모이제이션
+**Total Resource Usage**: ~4.5GB / 8GB
 
 ---
 
-## 모니터링
+## Architecture Diagram
 
-### 로깅
-- 구조화된 로깅 (JSON 형식)
-- 로그 레벨 관리 (DEBUG, INFO, WARN, ERROR)
-- 에러 추적 (Sentry 고려)
+```mermaid
+graph TD
+    Client[Client<br/>Flutter App<br/>Android · iOS · macOS · Windows · Linux] --> Nginx[Nginx<br/>Rate Limiting · SSL · Health Check]
 
-### 모니터링
-- API 응답 시간 모니터링
-- WebSocket 연결 수 모니터링
-- 데이터베이스 쿼리 성능 모니터링
-- 서버 리소스 모니터링
+    Nginx --> App1[app-1<br/>Spring Boot 3.5.6<br/>768MB]
+    Nginx --> App2[app-2<br/>Spring Boot 3.5.6<br/>768MB]
+    Nginx --> App3[app-3<br/>Spring Boot 3.5.6<br/>768MB]
 
----
+    App1 --> PG[(PostgreSQL 16<br/>512MB)]
+    App2 --> PG
+    App3 --> PG
 
-## 배포 전략
+    App1 --> Redis[(Redis 7<br/>128MB<br/>Cache · Pub/Sub · Rate Limit)]
+    App2 --> Redis
+    App3 --> Redis
 
-### 초기 배포
-- 단일 서버 구성
-- 데이터베이스 백업 (일일 1회)
-- 환경 변수 관리 (.env)
+    App1 --> MinIO[(MinIO<br/>S3-compatible Files)]
+    App2 --> MinIO
+    App3 --> MinIO
 
-### 향후 배포
-- Blue-Green 배포
-- 무중단 배포
-- 자동 스케일링
+    Redis -.->|Pub/Sub<br/>Multi-Instance Fanout| App1
+    Redis -.->|Pub/Sub| App2
+    Redis -.->|Pub/Sub| App3
 
----
+    Nginx -->|/files/| MinIO
 
-## 개발 환경
+    subgraph "Monitoring"
+        Prometheus[Prometheus<br/>5s scrape]
+        Grafana[Grafana]
+        Loki[Loki + Promtail]
+        Zipkin[Zipkin]
+        AM[Alertmanager]
+    end
 
-### 필수 도구
-- Node.js (v20 LTS)
-- PostgreSQL (v15+)
-- Git
-- Docker (선택)
-
-### 코드 품질
-- **ESLint** - 코드 린팅
-- **Prettier** - 코드 포맷팅
-- **Husky** - Git hooks
-- **lint-staged** - 커밋 전 검사
-
-### 테스팅 (향후)
-- **Jest** - 단위 테스트
-- **Supertest** - API 테스트
-- **React Testing Library** - 컴포넌트 테스트
-
-### 개발 워크플로우
-1. 기능 브랜치 생성
-2. 로컬 개발 및 테스트
-3. PR 생성 및 코드 리뷰
-4. 메인 브랜치 머지
-5. 자동 배포 (CI/CD)
+    App1 -.-> Prometheus
+    App2 -.-> Prometheus
+    App3 -.-> Prometheus
+    Prometheus --> Grafana
+    Prometheus --> AM
+```
 
 ---
 
-## 확장성 고려사항
+## Deployment Strategy
 
-### 수평 확장
-- Socket.io Redis 어댑터 (다중 서버 지원)
-- 로드 밸런서 (Sticky Session)
-- 데이터베이스 읽기 복제본
+### Canary Rolling Deployment
 
-### 향후 기능 확장
-- 그룹 채팅 지원 가능한 구조
-- 파일 전송 (멀티파트 업로드)
-- 메시지 검색 (Elasticsearch 고려)
-- 알림 시스템 (Redis Pub/Sub)
+```mermaid
+graph LR
+    A[Tag current image<br/>as :previous] --> B[Update app-1<br/>Canary]
+    B --> C{Health Check +<br/>60s Metrics}
+    C -->|5xx > 5%| D[Auto Rollback<br/>to :previous]
+    C -->|Healthy| E[Update app-2]
+    E --> F[Update app-3]
+    F --> G[Deploy Complete]
+```
+
+**Flow**:
+1. Backup current image as `:previous` tag
+2. Update app-1 only (canary) → health check → 60-second metric verification
+3. If 5xx error rate > 5% → automatic rollback to `:previous`
+4. On success → sequential rollout to app-2, then app-3
+
+**Graceful Shutdown**:
+```yaml
+server:
+  shutdown: graceful
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+```
 
 ---
 
-## 대규모 트래픽
+## Nginx Configuration
 
-100만+ 동시 접속자를 위한 확장 아키텍처
+### Rate Limiting
 
-→ [대규모 트래픽 아키텍처](../ARCHITECTURE-SCALE)
+| Zone | Limit | Target |
+|------|-------|--------|
+| auth | 5 req/min | Login, signup, password reset |
+| websocket | 10 req/sec | WebSocket upgrade |
+| general | 30 req/sec | All other endpoints |
+
+### Routing
+
+| Path | Target |
+|------|--------|
+| `/ws` | WebSocket upgrade → app instances |
+| `/files/` | MinIO proxy (MinIO port not exposed externally) |
+| `/api/**` | REST API → app instances |
+| `/actuator/prometheus` | Metrics (internal only) |
+
+### Security Headers
+
+| Header | Value |
+|--------|-------|
+| HSTS | max-age=1yr, includeSubDomains, preload |
+| CSP | Content Security Policy |
+| X-Frame-Options | DENY |
+| X-Content-Type-Options | nosniff |
+
+### Load Balancing
+
+- 3 upstream backends (app-1, app-2, app-3)
+- Passive health check
+- K6 bypass token for load testing
+
+---
+
+## Monitoring Stack
+
+### Prometheus (5-second scrape)
+
+- 3 instance endpoints: `/actuator/prometheus`
+- **Custom Metrics**:
+  - Messages sent/received count
+  - Login count
+  - WebSocket active connections
+  - Redis publish/delivery rates
+
+### Grafana (Provisioned Dashboards)
+
+- Application performance
+- WebSocket connections
+- Redis operations
+- JVM metrics (heap, threads, GC)
+
+### Loki + Promtail
+
+- Docker container log collection (regex: `app-1|app-2|app-3`)
+- Structured JSON logging via Logstash Logback Encoder
+
+### Zipkin
+
+- Distributed tracing via Micrometer Tracing (Brave bridge)
+- Trace propagation across 3 instances
+
+### Alertmanager Rules
+
+| Rule | Severity |
+|------|----------|
+| InstanceDown | warning |
+| MultipleInstancesDown | critical |
+| High 5xx error rate | critical |
+| Slow response time | warning |
+| CPU/Memory exceeded | warning |
+| DB connection pool exhaustion | critical |
+| Redis publish failure | critical |
+| WebSocket delivery failure | critical |
+| Inter-instance delivery imbalance | warning |
+
+---
+
+## CI/CD Pipeline
+
+```mermaid
+graph LR
+    A[Push to main] --> B[GitHub Actions]
+    B --> C[Build & Test<br/>Gradle + JUnit]
+    C --> D[Docker Build<br/>Java 25 JRE Alpine]
+    D --> E[Push to GHCR]
+    E --> F[SSH to NAS]
+    F --> G[deploy.sh<br/>Canary Rolling]
+```
+
+### Docker Build
+
+```dockerfile
+# Build stage
+FROM gradle:jdk25-alpine AS build
+# Run stage
+FROM eclipse-temurin:25-jre-alpine
+```
+
+**JVM Options**:
+```
+-XX:+UseContainerSupport
+-XX:MaxRAMPercentage=75.0
+-XX:InitialRAMPercentage=50.0
+-XX:+UseG1GC
+-XX:+UseStringDeduplication
+```
+
+---
+
+## Backup Strategy
+
+### PostgreSQL Backup
+
+```bash
+# Manual backup
+docker compose -f docker-compose.backup.yml run --rm backup
+
+# Automated backup (cron)
+docker compose -f docker-compose.backup.yml up -d backup-cron
+```
+
+- Daily automated backups via cron
+- Backup/restore scripts in `docker/backup/`
+
+---
+
+## Development Environment
+
+### Required Tools
+
+| Tool | Version |
+|------|---------|
+| Java | 25 (via Foojay toolchain resolver) |
+| Gradle | 8.x (wrapper included) |
+| Docker | Latest |
+| PostgreSQL | 16 |
+| Redis | 7 |
+
+### Quick Commands
+
+```bash
+# Build
+./gradlew build
+
+# Run tests
+./gradlew test
+
+# Run locally
+./gradlew bootRun
+```
+
+### Environment Variables (Required)
+
+```
+DB_PASSWORD, JWT_SECRET, ENCRYPTION_KEY,
+MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_PUBLIC_URL
+```
+
+See `.env.example` for full template.
+
+---
+
+## Next
+
+→ [Tech Stack Overview](../tech-stack/index)

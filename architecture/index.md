@@ -1,13 +1,13 @@
 ---
 layout: default
 title: Architecture
-description: Co-Talk 시스템 아키텍처 개요
-permalink: /architecture/
+nav_order: 2
+has_children: true
 ---
 
-# Co-Talk 아키텍처
+# Co-Talk Architecture
 
-MVP 버전의 시스템 아키텍처 문서입니다.
+시스템 아키텍처 문서입니다.
 
 ---
 
@@ -15,48 +15,59 @@ MVP 버전의 시스템 아키텍처 문서입니다.
 
 | 문서 | 설명 |
 |------|------|
-| [백엔드 구조](./backend) | 서버 구조, 컴포넌트, 레이어 |
-| [프론트엔드 구조](./frontend) | React 앱 구조, 상태 관리 |
-| [데이터베이스 설계](./database) | ERD, 테이블 설계, 인덱스 |
-| [API 설계](./api) | REST API, WebSocket 이벤트 |
-| [인프라](./infrastructure) | 배포, 보안, 모니터링 |
+| [백엔드 구조](./backend) | Hexagonal Architecture, Spring Boot 3.5.6, WebSocket |
+| [프론트엔드 구조](./frontend) | Flutter, BLoC/Cubit, Drift, GoRouter |
+| [데이터베이스 설계](./database) | ERD, 16개 테이블, 인덱스, Flyway |
+| [API 설계](./api) | 68개 REST 엔드포인트, STOMP WebSocket |
+| [인프라](./infrastructure) | Docker Compose, 카나리아 배포, 모니터링 |
 
 ---
 
 ## 전체 아키텍처 다이어그램
 
-```plantuml
-@startuml 시스템 아키텍처
-!theme plain
-skinparam componentStyle rectangle
-skinparam backgroundColor #FFFFFF
-skinparam component {
-    BackgroundColor #E8F5E9
-    BorderColor #388E3C
-}
+```mermaid
+graph TD
+    Client[Flutter App<br/>Android · iOS · macOS<br/>Windows · Linux] --> Nginx[Nginx<br/>Rate Limiting · SSL]
 
-actor "Web Browser\n(React App)" as Client
+    Nginx --> App1[app-1<br/>Spring Boot 3.5.6]
+    Nginx --> App2[app-2<br/>Spring Boot 3.5.6]
+    Nginx --> App3[app-3<br/>Spring Boot 3.5.6]
 
-component [API Gateway\nLoad Balancer\n(Nginx/Caddy)] as Gateway
+    App1 --> PG[(PostgreSQL 16)]
+    App2 --> PG
+    App3 --> PG
 
-component [REST API Server\n(Spring Boot)] as REST
-component [WebSocket Server\n(Socket.io/Netty)] as WS
+    App1 --> Redis[(Redis 7<br/>Cache · Pub/Sub)]
+    App2 --> Redis
+    App3 --> Redis
 
-database "PostgreSQL\nDatabase" as DB
+    App1 --> MinIO[(MinIO<br/>S3 Files)]
+    App2 --> MinIO
+    App3 --> MinIO
 
-Client --> Gateway : HTTPS/WSS
-Gateway --> REST : HTTP
-Gateway --> WS : WebSocket
-REST --> DB : SQL
-WS --> DB : SQL
+    Redis -.->|Pub/Sub| App1
+    Redis -.->|Pub/Sub| App2
+    Redis -.->|Pub/Sub| App3
 
-@enduml
+    Nginx -->|/files/| MinIO
+
+    App1 -.-> Monitoring[Prometheus · Grafana<br/>Loki · Zipkin]
+    App2 -.-> Monitoring
+    App3 -.-> Monitoring
 ```
 
 ---
 
-## 대규모 트래픽
+## 기술 스택 요약
 
-100만+ 동시 접속자를 위한 확장 아키텍처는 별도 문서를 참조하세요.
-
-→ [대규모 트래픽 아키텍처](../ARCHITECTURE-SCALE)
+| Component | Technology |
+|-----------|-----------|
+| **Backend** | Java 25 + Spring Boot 3.5.6 (Virtual Threads) |
+| **Frontend** | Flutter 3.8+ (Dart SDK ^3.8.1) |
+| **Database** | PostgreSQL 16 + Spring Data JPA + QueryDSL |
+| **Cache** | Redis 7 (RedisCacheManager) |
+| **Real-Time** | STOMP over WebSocket + Redis Pub/Sub |
+| **Storage** | MinIO (S3-compatible) |
+| **Deployment** | Docker Compose on NAS (3 instances, canary rolling) |
+| **CI/CD** | GitHub Actions → GHCR → deploy.sh |
+| **Monitoring** | Prometheus + Grafana + Loki + Zipkin + Alertmanager |

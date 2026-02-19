@@ -2,6 +2,7 @@
 layout: default
 title: MSA vs 모놀리식 아키텍처 결정
 description: Co-Talk 프로젝트 아키텍처 패턴 선택 근거
+parent: Architecture Decision Records
 permalink: /decisions/msa-vs-monolith
 ---
 

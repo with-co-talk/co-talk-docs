@@ -2,6 +2,7 @@
 layout: default
 title: 마이그레이션 가이드
 description: 레포지토리 분리 가이드
+parent: Guides
 permalink: /guides/migration-guide
 ---
 

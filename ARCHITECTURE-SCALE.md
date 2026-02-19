@@ -42,7 +42,7 @@ description: Co-Talk 대규모 트래픽 아키텍처 문서
 - **모니터링**: APM 도구 풍부 (New Relic, Datadog 등)
 
 **프레임워크:**
-- **Spring Boot** (v3.3+)
+- **Spring Boot** (v3.5+)
   - Java 25 LTS 지원
   - Virtual Threads 지원 (개선된 버전)
   - Spring WebFlux (리액티브 프로그래밍)

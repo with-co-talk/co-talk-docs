@@ -65,6 +65,20 @@
         </div>
 
         <div class="nav-section">
+          <div class="nav-section-title">API Reference</div>
+          <ul class="nav-list">
+            <li><a href="{{ site.baseurl }}/api/" class="nav-link {% if page.url == '/api/' or page.url == '/api/index.html' %}active{% endif %}">API Overview</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_AUTH" class="nav-link {% if page.url contains '/api/API_AUTH' %}active{% endif %}">└ Auth API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_USER" class="nav-link {% if page.url contains '/api/API_USER' %}active{% endif %}">└ User API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_FRIEND" class="nav-link {% if page.url contains '/api/API_FRIEND' %}active{% endif %}">└ Friend API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_CHATROOM" class="nav-link {% if page.url contains '/api/API_CHATROOM' %}active{% endif %}">└ Chat Room API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_MESSAGE" class="nav-link {% if page.url contains '/api/API_MESSAGE' %}active{% endif %}">└ Message API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_NOTIFICATION" class="nav-link {% if page.url contains '/api/API_NOTIFICATION' %}active{% endif %}">└ Notification API</a></li>
+            <li><a href="{{ site.baseurl }}/api/API_ADMIN" class="nav-link {% if page.url contains '/api/API_ADMIN' %}active{% endif %}">└ Admin API</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
           <div class="nav-section-title">기술 스택</div>
           <ul class="nav-list">
             <li><a href="{{ site.baseurl }}/tech-stack/" class="nav-link {% if page.url == '/tech-stack/' or page.url == '/tech-stack/index.html' %}active{% endif %}">개요</a></li>

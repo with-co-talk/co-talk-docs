@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Tech Stack
-description: Co-Talk 최종 기술 스택 결정서
-permalink: /tech-stack/
+nav_order: 3
+has_children: true
 ---
 
 # 기술 스택 결정서
@@ -48,7 +48,7 @@ permalink: /tech-stack/
 
 ### 백엔드
 - **언어**: Java 25 LTS
-- **프레임워크**: Spring Boot 3.3+
+- **프레임워크**: Spring Boot 3.5+
 - **실시간 통신**: Netty (WebSocket)
 - **데이터베이스**: PostgreSQL 15+ (Primary + Read Replicas)
 - **ORM**: Spring Data JPA + QueryDSL

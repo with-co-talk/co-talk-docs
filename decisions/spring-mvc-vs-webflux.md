@@ -2,6 +2,7 @@
 layout: default
 title: Spring MVC vs WebFlux
 description: Spring MVC 선택 이유 및 비교
+parent: Architecture Decision Records
 permalink: /decisions/spring-mvc-vs-webflux
 ---
 

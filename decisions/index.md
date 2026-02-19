@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Architecture Decision Records
-description: Co-Talk 기술 결정 문서 (ADR)
-permalink: /decisions/
+nav_order: 5
+has_children: true
 ---
 
 # 기술 결정 문서 (ADR)

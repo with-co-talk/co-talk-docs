@@ -2,6 +2,7 @@
 layout: default
 title: Frontend Platform Strategy
 description: 프론트엔드 플랫폼 전략
+parent: Architecture Decision Records
 permalink: /decisions/frontend-platform-strategy
 ---
 

@@ -2,6 +2,7 @@
 layout: default
 title: Redis Streams Ordering
 description: 메시지 순서 보장 전략
+parent: Architecture Decision Records
 permalink: /decisions/redis-streams-ordering
 ---
 

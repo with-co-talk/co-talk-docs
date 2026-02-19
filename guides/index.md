@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Guides
-description: Co-Talk 가이드 문서
-permalink: /guides/
+nav_order: 6
+has_children: true
 ---
 
 # 가이드 문서

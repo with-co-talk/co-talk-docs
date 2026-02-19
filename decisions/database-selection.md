@@ -2,6 +2,7 @@
 layout: default
 title: Database Selection
 description: PostgreSQL 선택 이유 및 비교
+parent: Architecture Decision Records
 permalink: /decisions/database-selection
 ---
 

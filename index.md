@@ -31,6 +31,60 @@ description: 대화에 집중한 커뮤니케이션 플랫폼 문서
 </div>
 
 <div class="doc-section">
+  <h2>API Reference</h2>
+  <ul class="doc-list">
+    <li>
+      <a href="{{ site.baseurl }}/api/">
+        <span class="doc-title">API Overview</span>
+        <span class="doc-desc">REST API 문서 (68개 엔드포인트)</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_AUTH">
+        <span class="doc-title">└ Auth</span>
+        <span class="doc-desc">인증, OAuth, 비밀번호, 계정</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_USER">
+        <span class="doc-title">└ User</span>
+        <span class="doc-desc">사용자 정보, 검색, 프로필</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_FRIEND">
+        <span class="doc-title">└ Friend</span>
+        <span class="doc-desc">친구 요청, 친구 관리, 차단</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_CHATROOM">
+        <span class="doc-title">└ ChatRoom</span>
+        <span class="doc-desc">채팅방 생성, 관리, 멤버</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_MESSAGE">
+        <span class="doc-title">└ Message</span>
+        <span class="doc-desc">메시지, 반응, 검색</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_NOTIFICATION">
+        <span class="doc-title">└ Notification</span>
+        <span class="doc-desc">알림, 디바이스, 파일 업로드</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ site.baseurl }}/api/API_ADMIN">
+        <span class="doc-title">└ Admin</span>
+        <span class="doc-desc">관리자, 신고, 통계</span>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="doc-section">
   <h2>아키텍처</h2>
   <ul class="doc-list">
     <li>
