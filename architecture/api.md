@@ -5,291 +5,149 @@ parent: Architecture
 nav_order: 4
 ---
 
-# API Design
+# API 설계
 
-[← Architecture Overview](./index)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [REST API Endpoints](#rest-api-endpoints)
-- [WebSocket (STOMP)](#websocket-stomp)
-- [Redis Pub/Sub Channels](#redis-pubsub-channels)
-- [Message Flow](#message-flow)
+[← 아키텍처 개요](./index)
 
 ---
 
-## Overview
+## 요약
 
-| Item | Detail |
-|------|--------|
+| 항목 | 내용 |
+|------|------|
 | **REST Base URL** | `/api/v1` |
-| **Auth** | JWT Bearer Token (HMAC-SHA256) |
-| **WebSocket** | STOMP over WebSocket at `/ws` |
-| **Total REST Endpoints** | 68 |
-| **Rate Limiting** | Nginx (L7) + Bucket4j/Redis (L4) |
-
-### Error Response Format
-
-```json
-{
-  "status": 400,
-  "message": "Error message",
-  "code": "ERROR_CODE"
-}
-```
+| **인증** | JWT Bearer Token (HMAC-SHA256) |
+| **WebSocket** | STOMP at `/ws` (SockJS fallback) |
+| **총 엔드포인트** | 68개 |
+| **API 문서** | [상세 API Reference](../api/) |
 
 ---
 
-## REST API Endpoints
+## REST API 엔드포인트
 
-### Auth (`/api/v1/auth`)
+### 인증 (`/api/v1/auth`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/signup` | Sign up |
-| POST | `/auth/login` | Login (returns access + refresh token) |
-| POST | `/auth/logout` | Logout (revoke refresh token) |
-| POST | `/auth/refresh` | Refresh access token |
-| GET | `/auth/me` | Current user info |
-| PUT | `/auth/me` | Update profile |
-| POST | `/auth/me/avatar` | Upload avatar |
-| DELETE | `/auth/me` | Delete account |
-| POST | `/auth/password/reset-request` | Request password reset email |
-| POST | `/auth/password/reset` | Reset password with token |
-| PUT | `/auth/password` | Change password (authenticated) |
-| POST | `/auth/email/find` | Find email by nickname + phone |
-| POST | `/auth/terms` | Agree to terms |
+| Method | 경로 | 설명 |
+|--------|------|------|
+| POST | `/auth/signup` | 회원가입 |
+| POST | `/auth/login` | 로그인 |
+| POST | `/auth/logout` | 로그아웃 |
+| POST | `/auth/refresh` | 토큰 갱신 |
+| GET | `/auth/me` | 내 정보 |
+| PUT | `/auth/me` | 프로필 수정 |
+| DELETE | `/auth/me` | 계정 삭제 |
 
-### User (`/api/v1/users`)
+### 사용자 (`/api/v1/users`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/users/{id}` | Get user info |
-| GET | `/users/search?q=keyword` | Search users |
-| GET | `/users/{id}/profile` | Get user profile |
-| GET | `/users/online-status` | Get online statuses |
-| PUT | `/users/me/background` | Update background image |
+| Method | 경로 | 설명 |
+|--------|------|------|
+| GET | `/users/{id}` | 사용자 조회 |
+| GET | `/users/search?q=` | 사용자 검색 |
+| GET | `/users/{id}/profile` | 프로필 조회 |
 
-### Friend (`/api/v1/friends`)
+### 친구 (`/api/v1/friends`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/friends?userId={id}` | Friend list |
-| POST | `/friends/requests` | Send friend request |
-| GET | `/friends/requests/received?userId={id}` | Received requests |
-| GET | `/friends/requests/sent?userId={id}` | Sent requests |
-| POST | `/friends/requests/{id}/accept?userId={id}` | Accept request |
-| POST | `/friends/requests/{id}/reject?userId={id}` | Reject request |
-| DELETE | `/friends/{id}?userId={id}` | Remove friend |
-| POST | `/friends/{id}/block` | Block user |
-| DELETE | `/friends/{id}/block` | Unblock user |
-| POST | `/friends/{id}/hide` | Hide friend |
-| DELETE | `/friends/{id}/hide` | Unhide friend |
+| Method | 경로 | 설명 |
+|--------|------|------|
+| GET | `/friends` | 친구 목록 |
+| POST | `/friends/requests` | 친구 요청 |
+| POST | `/friends/requests/{id}/accept` | 수락 |
+| POST | `/friends/requests/{id}/reject` | 거절 |
+| DELETE | `/friends/{id}` | 친구 삭제 |
+| POST | `/friends/{id}/block` | 차단 |
+| POST | `/friends/{id}/hide` | 숨김 |
 
-### Chat Room (`/api/v1/chat/rooms`)
+### 채팅방 (`/api/v1/chat/rooms`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/chat/rooms` | Chat room list |
-| POST | `/chat/rooms` | Create chat room |
-| GET | `/chat/rooms/{id}` | Room details |
-| PUT | `/chat/rooms/{id}` | Update room |
-| DELETE | `/chat/rooms/{id}` | Leave room |
-| GET | `/chat/rooms/{id}/members` | Room members |
-| POST | `/chat/rooms/{id}/members` | Add members |
-| DELETE | `/chat/rooms/{id}/members/{userId}` | Remove member |
-| POST | `/chat/rooms/direct/{userId}` | Create/get direct chat |
-| POST | `/chat/rooms/self` | Create/get self chat |
-| PUT | `/chat/rooms/{id}/announcement` | Update announcement |
-| PUT | `/chat/rooms/{id}/name` | Update room name |
-| GET | `/chat/rooms/{id}/unread-count` | Unread count |
+| Method | 경로 | 설명 |
+|--------|------|------|
+| GET | `/chat/rooms` | 채팅방 목록 |
+| POST | `/chat/rooms` | 채팅방 생성 |
+| GET | `/chat/rooms/{id}` | 상세 조회 |
+| POST | `/chat/rooms/direct/{userId}` | 1:1 채팅 생성/조회 |
+| POST | `/chat/rooms/self` | 셀프 채팅 |
+| DELETE | `/chat/rooms/{id}` | 나가기 |
+| POST | `/chat/rooms/{id}/read` | 읽음 처리 |
 
-### Message (`/api/v1/chat/rooms/{roomId}/messages`)
+### 메시지 (`/api/v1/chat/rooms/{roomId}/messages`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/chat/rooms/{roomId}/messages` | Message history (cursor pagination) |
-| POST | `/chat/rooms/{roomId}/messages` | Send message (REST fallback) |
-| GET | `/chat/rooms/{roomId}/messages/{id}` | Get message |
-| PUT | `/chat/rooms/{roomId}/messages/{id}` | Edit message |
-| DELETE | `/chat/rooms/{roomId}/messages/{id}` | Delete message (soft) |
-| POST | `/chat/rooms/{roomId}/messages/{id}/reactions` | Add reaction |
-| DELETE | `/chat/rooms/{roomId}/messages/{id}/reactions/{emoji}` | Remove reaction |
-| POST | `/chat/rooms/{roomId}/messages/{id}/forward` | Forward message |
-| GET | `/chat/rooms/{roomId}/messages/search?q=query` | Search messages |
-| POST | `/chat/rooms/{roomId}/read` | Mark as read |
-| GET | `/chat/rooms/{roomId}/messages/since?messageId={id}` | Gap recovery |
-| GET | `/chat/rooms/{roomId}/messages/around/{id}` | Messages around ID |
+| Method | 경로 | 설명 |
+|--------|------|------|
+| GET | `.../messages` | 히스토리 (커서 페이지네이션) |
+| POST | `.../messages` | 메시지 전송 (REST 폴백) |
+| PUT | `.../messages/{id}` | 수정 |
+| DELETE | `.../messages/{id}` | 삭제 (soft) |
+| POST | `.../messages/{id}/reactions` | 리액션 추가 |
+| POST | `.../messages/{id}/forward` | 전달 |
+| GET | `.../messages/since?messageId=` | Gap Recovery |
 
-### Notification (`/api/v1/notifications`)
+### 기타
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/notifications/settings` | Get notification settings |
-| PUT | `/notifications/settings` | Update notification settings |
-| POST | `/notifications/device-token` | Register device token |
-| DELETE | `/notifications/device-token` | Unregister device token |
+| 컨트롤러 | 주요 엔드포인트 |
+|----------|----------------|
+| **Notification** | 알림 설정 조회/수정, 디바이스 토큰 등록/해제 |
+| **File** | 파일 업로드 (multipart) |
+| **Admin** | 신고 관리, 사용자 관리, 통계 |
 
-### File (`/api/v1/files`)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/files/upload` | Upload file (multipart) |
-
-### Admin (`/api/v1/admin`)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/admin/reports` | List reports |
-| GET | `/admin/reports/{id}` | Report details |
-| PUT | `/admin/reports/{id}` | Process report |
-| GET | `/admin/users` | List users |
-| GET | `/admin/users/{id}` | User details |
-| PUT | `/admin/users/{id}/status` | Update user status |
-| GET | `/admin/statistics` | Platform statistics |
-| GET | `/admin/statistics/messages` | Message statistics |
-| GET | `/admin/statistics/users` | User statistics |
-| GET | `/admin/statistics/chat-rooms` | Chat room statistics |
+> 전체 68개 엔드포인트의 상세 스펙은 [API Reference](../api/) 참조
 
 ---
 
 ## WebSocket (STOMP)
 
-### Connection
+### 클라이언트 → 서버
 
-| Item | Detail |
-|------|--------|
-| **Endpoint** | `ws://{host}/ws` (SockJS fallback) |
-| **Protocol** | STOMP 1.2 |
-| **Auth** | JWT token in STOMP CONNECT headers |
-| **Message Size** | 128KB max |
+| Destination | 설명 |
+|-------------|------|
+| `/app/chat/message` | 메시지 전송 |
+| `/app/chat/typing` | 타이핑 시작 |
+| `/app/chat/typing/stop` | 타이핑 중지 |
+| `/app/chat/read` | 읽음 확인 |
+| `/app/chat/reaction` | 리액션 추가/제거 |
 
-### Client → Server (SEND)
+### 서버 → 클라이언트
 
-| Destination | Payload | Description |
-|-------------|---------|-------------|
-| `/app/chat/message` | `{roomId, content, type, ...}` | Send message |
-| `/app/chat/typing` | `{roomId, userId}` | Typing start |
-| `/app/chat/typing/stop` | `{roomId, userId}` | Typing stop |
-| `/app/chat/read` | `{roomId, userId, messageId}` | Mark as read |
-| `/app/chat/reaction` | `{roomId, messageId, emoji, action}` | Add/remove reaction |
+| Topic | 이벤트 |
+|-------|--------|
+| `/topic/chat/room/{roomId}` | MESSAGE, LINK_PREVIEW_UPDATED |
+| `/topic/chat/room/{roomId}/reaction` | REACTION_ADDED/REMOVED |
+| `/topic/chat/room/{roomId}/event` | TYPING, READ, DELETE, UPDATE, USER_LEFT/JOINED |
+| `/topic/user/{userId}` | 채팅 목록 업데이트, 온라인 상태 |
 
-### Server → Client (SUBSCRIBE)
-
-| Topic | Events | Description |
-|-------|--------|-------------|
-| `/topic/chat/room/{roomId}` | MESSAGE, LINK_PREVIEW_UPDATED | New messages |
-| `/topic/chat/room/{roomId}/reaction` | REACTION_ADDED, REACTION_REMOVED | Reactions |
-| `/topic/chat/room/{roomId}/event` | TYPING, STOP_TYPING, READ, MESSAGE_DELETED, MESSAGE_UPDATED, USER_LEFT, USER_JOINED | Room events |
-| `/topic/user/{userId}` | Chat list updates, online status | Per-user events |
-
-### Event Payload
-
-All WebSocket events include:
+### 메시지 페이로드
 
 ```json
 {
-  "eventId": "unique-event-id",
+  "eventId": "고유 ID (중복 제거용)",
   "schemaVersion": 1,
   "type": "MESSAGE",
-  "data": { ... },
-  "timestamp": "2026-02-19T12:00:00"
+  "data": { ... }
 }
 ```
 
-- `eventId`: Unique identifier for client-side deduplication
-- `schemaVersion`: Protocol version for forward compatibility
-
 ---
 
-## Redis Pub/Sub Channels
-
-```mermaid
-graph LR
-    subgraph "Publish"
-        I1[app-1] -->|publish| R1[chat:room:123]
-        I1 -->|publish| R2[chat:room:123:reaction]
-        I1 -->|publish| R3[chat:room:123:event]
-        I1 -->|publish| R4[user:event:456]
-    end
-
-    subgraph "Subscribe (all instances)"
-        R1 --> I1s[app-1]
-        R1 --> I2s[app-2]
-        R1 --> I3s[app-3]
-    end
-```
-
-| Channel | Purpose |
-|---------|---------|
-| `chat:room:{roomId}` | Chat messages (TEXT, IMAGE, FILE, SYSTEM) |
-| `chat:room:{roomId}:reaction` | Reaction events |
-| `chat:room:{roomId}:event` | Room events (READ, TYPING, DELETE, UPDATE, USER_LEFT, USER_JOINED) |
-| `user:event:{userId}` | User-specific events (chat list updates, profile updates) |
-
----
-
-## Message Flow
-
-### Send Message (Happy Path)
+## 메시지 전송 흐름
 
 ```mermaid
 sequenceDiagram
-    participant Flutter as Flutter Client
-    participant WS as WebSocket (STOMP)
-    participant Ctrl as ChatWebSocketController
-    participant Svc as MessageService
+    participant C as Flutter
+    participant WS as STOMP 서버
     participant DB as PostgreSQL
-    participant Redis as Redis Pub/Sub
-    participant All as All 3 Instances
-    participant FCM as Firebase CM
+    participant R as Redis Pub/Sub
+    participant All as 3개 인스턴스
+    participant FCM as FCM
 
-    Flutter->>WS: STOMP SEND /app/chat/message
-    WS->>Ctrl: handleMessage()
-    Ctrl->>Svc: sendMessage()
-    Svc->>DB: save (AES-256 encrypted)
-    Svc->>Redis: publish to chat:room:{id}
-
-    par Broadcast to all instances
-        Redis->>All: All instances receive
-        All->>Flutter: /topic/chat/room/{id}
-    end
-
-    par Push notification
-        Svc->>FCM: Send to offline members
-    end
-
-    par Chat list update
-        Svc->>Redis: publish to user:event:{userId}
-        Redis->>All: Broadcast chat list updates
-    end
-```
-
-### Read Receipt Flow
-
-```mermaid
-sequenceDiagram
-    participant Flutter as Flutter Client
-    participant WS as WebSocket
-    participant Svc as Service
-    participant DB as PostgreSQL
-    participant Redis as Redis
-
-    Flutter->>WS: STOMP SEND /app/chat/read
-    WS->>Svc: markAsRead(roomId, messageId)
-    Svc->>DB: Update last_read_message_id
-    Svc->>Redis: Publish READ event
-    Redis->>WS: Broadcast to room members
-    WS->>Flutter: /topic/chat/room/{id}/event (READ)
+    C->>WS: SEND /app/chat/message
+    WS->>DB: 저장 (AES-256 암호화)
+    WS->>R: PUBLISH chat:room:{id}
+    R->>All: 전 인스턴스 수신 → WebSocket 전달
+    WS->>FCM: 오프라인 멤버에게 푸시
 ```
 
 ---
 
-## Related Documents
+## 관련 문서
 
-→ [API Reference (detailed)](../api/index)
-→ [Backend Architecture](./backend)
-→ [Frontend Architecture](./frontend)
+→ [API Reference (상세)](../api/)
+→ [백엔드 아키텍처](./backend)

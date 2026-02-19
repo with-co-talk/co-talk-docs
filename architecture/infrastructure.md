@@ -5,299 +5,144 @@ parent: Architecture
 nav_order: 5
 ---
 
-# Infrastructure & Deployment
+# 인프라 및 배포
 
-[← Architecture Overview](./index)
-
----
-
-## Table of Contents
-
-- [Production Environment](#production-environment)
-- [Architecture Diagram](#architecture-diagram)
-- [Deployment Strategy](#deployment-strategy)
-- [Nginx Configuration](#nginx-configuration)
-- [Monitoring Stack](#monitoring-stack)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [Backup Strategy](#backup-strategy)
-- [Development Environment](#development-environment)
+[← 아키텍처 개요](./index)
 
 ---
 
-## Production Environment
+## 요약
 
-### Platform
-
-| Item | Detail |
-|------|--------|
-| **Host** | Synology NAS (8GB RAM) |
-| **Orchestration** | Docker Compose |
-| **Strategy** | Canary Rolling Deployment (3 instances) |
-| **Reverse Proxy** | Nginx (round-robin + passive health check) |
-| **Graceful Shutdown** | 30-second timeout |
+| 항목 | 내용 |
+|------|------|
+| **호스트** | Synology NAS (8GB RAM) |
+| **오케스트레이션** | Docker Compose |
+| **배포 전략** | 카나리아 롤링 (3개 인스턴스) |
+| **리버스 프록시** | Nginx (round-robin, passive health check) |
 | **CI/CD** | GitHub Actions → GHCR → deploy.sh |
-
-### Service Composition
-
-| Service | Image | Memory | Role |
-|---------|-------|--------|------|
-| app-1, app-2, app-3 | GHCR co-talk | 768MB each | Spring Boot 3.5.6 |
-| nginx | nginx:alpine | - | Reverse proxy, rate limiting, SSL |
-| postgres | postgres:16-alpine | 512MB | Primary database |
-| redis | redis:7-alpine | 128MB | Cache, Pub/Sub, rate limiting |
-| minio | minio/minio | - | S3-compatible file storage |
-| prometheus | prom/prometheus | - | Metrics collection (5s scrape) |
-| grafana | grafana/grafana:10.2.2 | - | Dashboards |
-| loki | grafana/loki:2.9.2 | - | Log aggregation |
-| promtail | grafana/promtail:2.9.2 | - | Docker log collection |
-| zipkin | openzipkin/zipkin | - | Distributed tracing |
-| alertmanager | prom/alertmanager | - | Slack/email alerts |
-
-**Total Resource Usage**: ~4.5GB / 8GB
+| **총 리소스** | ~4.5GB / 8GB |
 
 ---
 
-## Architecture Diagram
+## 아키텍처 다이어그램
 
 ```mermaid
 graph TD
-    Client[Client<br/>Flutter App<br/>Android · iOS · macOS · Windows · Linux] --> Nginx[Nginx<br/>Rate Limiting · SSL · Health Check]
+    Client[Flutter App] --> Nginx[Nginx<br/>Rate Limit · SSL]
 
-    Nginx --> App1[app-1<br/>Spring Boot 3.5.6<br/>768MB]
-    Nginx --> App2[app-2<br/>Spring Boot 3.5.6<br/>768MB]
-    Nginx --> App3[app-3<br/>Spring Boot 3.5.6<br/>768MB]
+    Nginx --> App1[app-1 · 768MB]
+    Nginx --> App2[app-2 · 768MB]
+    Nginx --> App3[app-3 · 768MB]
 
     App1 --> PG[(PostgreSQL 16<br/>512MB)]
     App2 --> PG
     App3 --> PG
 
-    App1 --> Redis[(Redis 7<br/>128MB<br/>Cache · Pub/Sub · Rate Limit)]
+    App1 --> Redis[(Redis 7<br/>128MB)]
     App2 --> Redis
     App3 --> Redis
 
-    App1 --> MinIO[(MinIO<br/>S3-compatible Files)]
+    App1 --> MinIO[(MinIO)]
     App2 --> MinIO
     App3 --> MinIO
 
-    Redis -.->|Pub/Sub<br/>Multi-Instance Fanout| App1
+    Redis -.->|Pub/Sub| App1
     Redis -.->|Pub/Sub| App2
     Redis -.->|Pub/Sub| App3
 
     Nginx -->|/files/| MinIO
-
-    subgraph "Monitoring"
-        Prometheus[Prometheus<br/>5s scrape]
-        Grafana[Grafana]
-        Loki[Loki + Promtail]
-        Zipkin[Zipkin]
-        AM[Alertmanager]
-    end
-
-    App1 -.-> Prometheus
-    App2 -.-> Prometheus
-    App3 -.-> Prometheus
-    Prometheus --> Grafana
-    Prometheus --> AM
 ```
 
 ---
 
-## Deployment Strategy
+## 서비스 구성
 
-### Canary Rolling Deployment
+| 서비스 | 이미지 | 메모리 | 역할 |
+|--------|-------|--------|------|
+| app-1/2/3 | GHCR co-talk | 768MB × 3 | Spring Boot 3.5.6 |
+| nginx | nginx:alpine | - | 리버스 프록시, Rate Limiting |
+| postgres | postgres:16-alpine | 512MB | 주 DB |
+| redis | redis:7-alpine | 128MB | 캐시, Pub/Sub, Rate Limit |
+| minio | minio/minio | - | S3 파일 스토리지 |
+| prometheus | prom/prometheus | - | 메트릭 (5초 스크래핑) |
+| grafana | grafana:10.2.2 | - | 대시보드 |
+| loki + promtail | grafana/loki:2.9.2 | - | 로그 집계 |
+| zipkin | openzipkin/zipkin | - | 분산 추적 |
+| alertmanager | prom/alertmanager | - | Slack/이메일 알림 |
+
+---
+
+## 카나리아 배포
 
 ```mermaid
 graph LR
-    A[Tag current image<br/>as :previous] --> B[Update app-1<br/>Canary]
-    B --> C{Health Check +<br/>60s Metrics}
-    C -->|5xx > 5%| D[Auto Rollback<br/>to :previous]
-    C -->|Healthy| E[Update app-2]
-    E --> F[Update app-3]
-    F --> G[Deploy Complete]
+    A[":previous 백업"] --> B["app-1 업데이트<br/>(카나리아)"]
+    B --> C{"헬스체크 +<br/>60초 메트릭"}
+    C -->|"5xx > 5%"| D[자동 롤백]
+    C -->|정상| E[app-2 업데이트]
+    E --> F[app-3 업데이트]
+    F --> G[완료]
 ```
 
-**Flow**:
-1. Backup current image as `:previous` tag
-2. Update app-1 only (canary) → health check → 60-second metric verification
-3. If 5xx error rate > 5% → automatic rollback to `:previous`
-4. On success → sequential rollout to app-2, then app-3
-
-**Graceful Shutdown**:
-```yaml
-server:
-  shutdown: graceful
-spring:
-  lifecycle:
-    timeout-per-shutdown-phase: 30s
-```
+1. 현재 이미지를 `:previous`로 태그
+2. app-1만 업데이트 → 헬스체크 → 60초 메트릭 검증
+3. 5xx 에러율 > 5% → `:previous`로 자동 롤백
+4. 정상 → app-2, app-3 순차 배포
 
 ---
 
-## Nginx Configuration
+## Nginx 설정
 
-### Rate Limiting
+| 기능 | 설정 |
+|------|------|
+| **Rate Limit** | auth 5r/m, WebSocket 10r/s, general 30r/s |
+| **WebSocket** | `/ws` → Upgrade 헤더 처리 |
+| **파일 프록시** | `/files/` → MinIO (외부 포트 미노출) |
+| **보안 헤더** | HSTS, CSP, X-Frame-Options, X-Content-Type-Options |
+| **로드 밸런싱** | 3 upstream, passive health check |
 
-| Zone | Limit | Target |
-|------|-------|--------|
-| auth | 5 req/min | Login, signup, password reset |
-| websocket | 10 req/sec | WebSocket upgrade |
-| general | 30 req/sec | All other endpoints |
+---
 
-### Routing
+## 모니터링
 
-| Path | Target |
+### Alertmanager 알림 규칙
+
+| 규칙 | 심각도 |
 |------|--------|
-| `/ws` | WebSocket upgrade → app instances |
-| `/files/` | MinIO proxy (MinIO port not exposed externally) |
-| `/api/**` | REST API → app instances |
-| `/actuator/prometheus` | Metrics (internal only) |
-
-### Security Headers
-
-| Header | Value |
-|--------|-------|
-| HSTS | max-age=1yr, includeSubDomains, preload |
-| CSP | Content Security Policy |
-| X-Frame-Options | DENY |
-| X-Content-Type-Options | nosniff |
-
-### Load Balancing
-
-- 3 upstream backends (app-1, app-2, app-3)
-- Passive health check
-- K6 bypass token for load testing
-
----
-
-## Monitoring Stack
-
-### Prometheus (5-second scrape)
-
-- 3 instance endpoints: `/actuator/prometheus`
-- **Custom Metrics**:
-  - Messages sent/received count
-  - Login count
-  - WebSocket active connections
-  - Redis publish/delivery rates
-
-### Grafana (Provisioned Dashboards)
-
-- Application performance
-- WebSocket connections
-- Redis operations
-- JVM metrics (heap, threads, GC)
-
-### Loki + Promtail
-
-- Docker container log collection (regex: `app-1|app-2|app-3`)
-- Structured JSON logging via Logstash Logback Encoder
-
-### Zipkin
-
-- Distributed tracing via Micrometer Tracing (Brave bridge)
-- Trace propagation across 3 instances
-
-### Alertmanager Rules
-
-| Rule | Severity |
-|------|----------|
 | InstanceDown | warning |
 | MultipleInstancesDown | critical |
-| High 5xx error rate | critical |
-| Slow response time | warning |
-| CPU/Memory exceeded | warning |
-| DB connection pool exhaustion | critical |
-| Redis publish failure | critical |
-| WebSocket delivery failure | critical |
-| Inter-instance delivery imbalance | warning |
+| 5xx 에러율 높음 | critical |
+| 응답 시간 느림 | warning |
+| CPU/메모리 초과 | warning |
+| DB 커넥션 풀 소진 | critical |
+| Redis publish 실패 | critical |
 
 ---
 
-## CI/CD Pipeline
+## CI/CD
 
 ```mermaid
 graph LR
     A[Push to main] --> B[GitHub Actions]
-    B --> C[Build & Test<br/>Gradle + JUnit]
-    C --> D[Docker Build<br/>Java 25 JRE Alpine]
-    D --> E[Push to GHCR]
-    E --> F[SSH to NAS]
-    F --> G[deploy.sh<br/>Canary Rolling]
-```
-
-### Docker Build
-
-```dockerfile
-# Build stage
-FROM gradle:jdk25-alpine AS build
-# Run stage
-FROM eclipse-temurin:25-jre-alpine
-```
-
-**JVM Options**:
-```
--XX:+UseContainerSupport
--XX:MaxRAMPercentage=75.0
--XX:InitialRAMPercentage=50.0
--XX:+UseG1GC
--XX:+UseStringDeduplication
+    B --> C[Build & Test]
+    C --> D[Docker Build<br/>Java 25 Alpine]
+    D --> E[Push GHCR]
+    E --> F[SSH → NAS]
+    F --> G[deploy.sh<br/>카나리아]
 ```
 
 ---
 
-## Backup Strategy
-
-### PostgreSQL Backup
+## 백업
 
 ```bash
-# Manual backup
+# 수동 백업
 docker compose -f docker-compose.backup.yml run --rm backup
 
-# Automated backup (cron)
+# 자동 백업 (cron)
 docker compose -f docker-compose.backup.yml up -d backup-cron
 ```
 
-- Daily automated backups via cron
-- Backup/restore scripts in `docker/backup/`
-
 ---
 
-## Development Environment
-
-### Required Tools
-
-| Tool | Version |
-|------|---------|
-| Java | 25 (via Foojay toolchain resolver) |
-| Gradle | 8.x (wrapper included) |
-| Docker | Latest |
-| PostgreSQL | 16 |
-| Redis | 7 |
-
-### Quick Commands
-
-```bash
-# Build
-./gradlew build
-
-# Run tests
-./gradlew test
-
-# Run locally
-./gradlew bootRun
-```
-
-### Environment Variables (Required)
-
-```
-DB_PASSWORD, JWT_SECRET, ENCRYPTION_KEY,
-MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_PUBLIC_URL
-```
-
-See `.env.example` for full template.
-
----
-
-## Next
-
-→ [Tech Stack Overview](../tech-stack/index)
+→ [기술 스택 개요](../tech-stack/)

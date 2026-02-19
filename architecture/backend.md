@@ -5,65 +5,53 @@ parent: Architecture
 nav_order: 1
 ---
 
-# Backend Architecture
+# 백엔드 아키텍처
 
-[← Architecture Overview](./index)
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Hexagonal Architecture](#hexagonal-architecture)
-- [Package Structure](#package-structure)
-- [Design Patterns](#design-patterns)
-- [WebSocket & Real-Time](#websocket--real-time)
-- [Security](#security)
-- [Key Components](#key-components)
+[← 아키텍처 개요](./index)
 
 ---
 
-## Overview
+## 요약
 
-| Item | Detail |
-|------|--------|
-| **Language** | Java 25 (Virtual Threads, JEP 491) |
-| **Framework** | Spring Boot 3.5.6 (Spring MVC) |
-| **Architecture** | Hexagonal (Ports & Adapters) |
-| **Database** | PostgreSQL 16 + Spring Data JPA + QueryDSL 5.1.0 |
-| **Cache** | Redis 7 (RedisCacheManager) |
-| **Real-Time** | STOMP over WebSocket + Redis Pub/Sub |
-| **File Storage** | MinIO (S3-compatible) |
-| **ID Strategy** | Snowflake ID (application-generated) |
-| **Encryption** | AES-256 (message content at rest) |
-| **Migration** | Flyway (SQL-based) |
+| 항목 | 내용 |
+|------|------|
+| **언어** | Java 25 (Virtual Threads, JEP 491) |
+| **프레임워크** | Spring Boot 3.5.6 (Spring MVC) |
+| **아키텍처** | Hexagonal (Ports & Adapters) |
+| **DB** | PostgreSQL 16 + JPA + QueryDSL 5.1.0 |
+| **캐시** | Redis 7 (RedisCacheManager) |
+| **실시간** | STOMP over WebSocket + Redis Pub/Sub |
+| **파일** | MinIO (S3 호환) |
+| **ID** | Snowflake ID (애플리케이션 생성) |
+| **암호화** | AES-256 (메시지 내용) |
+| **마이그레이션** | Flyway (SQL) |
 
 ---
 
-## Hexagonal Architecture
+## 헥사고날 아키텍처
 
 ```mermaid
 graph TD
     subgraph "Inbound Adapters"
-        REST[REST Controllers<br/>Spring MVC]
-        WS[WebSocket Controller<br/>STOMP]
+        REST[REST 컨트롤러<br/>8개]
+        WS[WebSocket 컨트롤러<br/>STOMP]
     end
 
-    subgraph "Application Layer"
-        UC[Use Cases<br/>Application Services]
-        PORT_IN[Inbound Ports<br/>Interfaces]
-        PORT_OUT[Outbound Ports<br/>Interfaces]
+    subgraph "Application"
+        PORT_IN[Inbound Ports]
+        UC[서비스<br/>Use Cases]
+        PORT_OUT[Outbound Ports]
     end
 
-    subgraph "Domain Layer"
-        ENT[Domain Entities<br/>Business Logic]
+    subgraph "Domain"
+        ENT[엔티티 · 비즈니스 로직]
     end
 
     subgraph "Outbound Adapters"
-        JPA[JPA Repositories<br/>PostgreSQL]
-        REDIS[Redis Adapter<br/>Cache + Pub/Sub]
-        S3[MinIO Adapter<br/>File Storage]
-        FCM[FCM Adapter<br/>Push Notifications]
+        JPA[JPA → PostgreSQL]
+        REDIS[Redis<br/>캐시 · Pub/Sub]
+        S3[MinIO → 파일]
+        FCM[FCM → 푸시]
     end
 
     REST --> PORT_IN
@@ -77,256 +65,120 @@ graph TD
     PORT_OUT --> FCM
 ```
 
-**Dependency Direction**: Adapters → Application → Domain (domain has zero outward dependencies)
-
-### Layer Responsibilities
-
-| Layer | Responsibility |
-|-------|---------------|
-| **Domain** | Pure entities, value objects, business rules. No framework dependencies. |
-| **Application** | Use cases (service orchestration), inbound/outbound port interfaces, DTOs. |
-| **Adapter (Inbound)** | REST controllers, WebSocket controller, request/response mapping. |
-| **Adapter (Outbound)** | JPA repositories, Redis operations, MinIO file ops, FCM push. |
+**의존성 방향**: Adapter → Application → Domain (도메인은 외부 의존 없음)
 
 ---
 
-## Package Structure
+## 패키지 구조
 
 ```
 com.cotalk/
-├── adapter/
-│   ├── inbound/
-│   │   ├── rest/           # REST controllers (8 controllers)
-│   │   │   ├── AuthController
-│   │   │   ├── UserController
-│   │   │   ├── FriendController
-│   │   │   ├── ChatRoomController
-│   │   │   ├── MessageController
-│   │   │   ├── NotificationController
-│   │   │   ├── FileController
-│   │   │   └── AdminController
-│   │   └── websocket/      # STOMP WebSocket
-│   │       └── ChatWebSocketController
-│   └── outbound/
-│       ├── persistence/    # JPA repositories, entities, mappers
-│       ├── redis/          # Redis cache, Pub/Sub
-│       ├── storage/        # MinIO file operations
-│       └── fcm/            # Firebase Cloud Messaging
+├── adapter/inbound/
+│   ├── rest/              # 8개 REST 컨트롤러 + DTO (record)
+│   └── websocket/         # STOMP WebSocket 컨트롤러
+├── adapter/outbound/
+│   ├── persistence/       # JPA 리포지토리
+│   ├── redis/             # Redis 캐시, Pub/Sub
+│   ├── storage/           # MinIO 파일
+│   └── fcm/               # Firebase 푸시
 ├── application/
-│   ├── port/
-│   │   ├── inbound/        # Use case interfaces
-│   │   └── outbound/       # Repository port interfaces
-│   ├── service/            # Application services (use case impl)
-│   └── dto/                # Request/Response DTOs (records)
+│   ├── port/inbound/      # Use Case 인터페이스
+│   ├── port/outbound/     # Repository 인터페이스
+│   ├── service/           # Use Case 구현체
+│   └── dto/               # Request/Response
 ├── domain/
-│   ├── entity/             # Domain entities (JPA)
-│   ├── enums/              # Status enums, types
-│   └── exception/          # Domain exceptions
-└── config/                 # Spring configurations
-    ├── SecurityConfig
-    ├── WebSocketConfig
-    ├── CacheConfig
-    ├── RedisConfig
-    └── RateLimitConfig
+│   ├── entity/            # JPA 엔티티
+│   ├── enums/             # 상태 Enum
+│   └── exception/         # 도메인 예외
+└── config/                # Security, WebSocket, Cache, Redis, RateLimit
 ```
 
 ---
 
-## Design Patterns
+## 핵심 설계 패턴
 
-### Snowflake ID Generation
-
-All primary entities use application-generated Snowflake IDs (BIGINT) for globally unique, time-ordered identifiers. Exceptions: `message_reactions`, `password_reset_tokens`, `terms_agreements`, `profile_history`, `hidden_friends` use `GenerationType.IDENTITY`.
-
-### AES-256 Message Encryption
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Controller
-    participant Service
-    participant EncryptedStringConverter
-    participant DB
-
-    Client->>Controller: Send message (plaintext)
-    Controller->>Service: Process message
-    Service->>EncryptedStringConverter: Auto-encrypt on persist
-    EncryptedStringConverter->>DB: Store ciphertext
-    Note over DB: AES-256 encrypted content
-
-    DB->>EncryptedStringConverter: Read ciphertext
-    EncryptedStringConverter->>Service: Auto-decrypt on load
-    Service->>Controller: Return plaintext
-    Controller->>Client: Deliver message
-```
-
-- `EncryptedStringConverter` (JPA `@Converter`): Transparent AES-256 encryption/decryption
-- `ENCRYPTION_KEY` from environment variable
-
-### CQRS-Lite with QueryDSL
-
-- **Commands**: Spring Data JPA repositories for writes
-- **Queries**: QueryDSL 5.1.0 (Jakarta) for complex, type-safe dynamic queries
-- Applied to: message search, friend list with filters, chat room queries
-
-### Virtual Threads (JEP 491)
-
-```yaml
-spring:
-  threads:
-    virtual:
-      enabled: true
-```
-
-- Spring MVC request handling on virtual threads (no WebFlux needed)
-- JEP 491 resolves pinning issue in `synchronized` blocks
-- Carrier thread released during I/O blocking operations
+| 패턴 | 설명 |
+|------|------|
+| **AES-256 투명 암호화** | JPA `@Converter`로 메시지 저장 시 자동 암호화/조회 시 복호화 |
+| **Snowflake ID** | 3개 인스턴스에서 충돌 없는 분산 ID 생성 (BIGINT) |
+| **CQRS-lite** | 명령/조회 Use Case 인터페이스 분리 |
+| **스키마 버전관리** | WebSocket 메시지에 `schemaVersion` + `eventId` 포함 |
 
 ---
 
-## WebSocket & Real-Time
+## 실시간 메시징
 
-### STOMP Protocol
-
-| Item | Detail |
-|------|--------|
-| **Endpoint** | `/ws` (SockJS fallback) |
-| **Protocol** | STOMP over WebSocket |
-| **Broker** | SimpleBroker (local) + Redis Pub/Sub (multi-instance) |
-| **Auth** | JWT validation on STOMP CONNECT |
-| **Authorization** | Chat room membership check on SUBSCRIBE |
-
-### Multi-Instance Message Flow
+### 멀티 인스턴스 메시지 흐름
 
 ```mermaid
 sequenceDiagram
-    participant C1 as Client A<br/>(Instance 1)
+    participant C as 클라이언트 A
     participant I1 as app-1
-    participant Redis as Redis Pub/Sub
+    participant R as Redis Pub/Sub
     participant I2 as app-2
     participant I3 as app-3
-    participant C2 as Client B<br/>(Instance 2)
-    participant C3 as Client C<br/>(Instance 3)
 
-    C1->>I1: STOMP SEND /app/chat/message
-    I1->>I1: Save to DB (encrypted)
-    I1->>Redis: Publish to chat:room:{id}
-    Redis->>I1: Receive (broadcast to local clients)
-    Redis->>I2: Receive (broadcast to local clients)
-    Redis->>I3: Receive (broadcast to local clients)
-    I1->>C1: /topic/chat/room/{id}
-    I2->>C2: /topic/chat/room/{id}
-    I3->>C3: /topic/chat/room/{id}
+    C->>I1: STOMP SEND
+    I1->>I1: DB 저장 (AES-256)
+    I1->>R: PUBLISH chat:room:{id}
+    R->>I1: → 로컬 WebSocket 전달
+    R->>I2: → 로컬 WebSocket 전달
+    R->>I3: → 로컬 WebSocket 전달
 ```
 
-### Redis Channel Structure
+### Redis 채널 구조
 
-| Channel Pattern | Purpose |
-|-----------------|---------|
-| `chat:room:{roomId}` | Chat messages |
-| `chat:room:{roomId}:reaction` | Reaction events |
-| `chat:room:{roomId}:event` | Room events (READ, TYPING, DELETE, UPDATE) |
-| `user:event:{userId}` | User events (chat list updates) |
+| 채널 | 용도 |
+|------|------|
+| `chat:room:{roomId}` | 채팅 메시지 |
+| `chat:room:{roomId}:reaction` | 리액션 이벤트 |
+| `chat:room:{roomId}:event` | READ, TYPING, DELETE, UPDATE 등 |
+| `user:event:{userId}` | 채팅 목록 업데이트 |
 
-### Key Components
+### 이벤트 타입
 
-| Component | Role |
-|-----------|------|
-| `ChatWebSocketController` | STOMP message handling, individual try-catch per broadcast |
-| `RedisChatMessageBroker` | Publish messages to Redis channels |
-| `RedisChatMessageSubscriber` | Subscribe to Redis, forward to local WebSocket clients |
-| `WebSocketEventListener` | Connection/disconnect events, online status tracking |
-
-### Event Types
-
-MESSAGE, REACTION_ADDED, REACTION_REMOVED, TYPING, STOP_TYPING, READ, MESSAGE_DELETED, MESSAGE_UPDATED, LINK_PREVIEW_UPDATED, USER_LEFT, USER_JOINED
-
-### Transport Limits
-
-| Setting | Value |
-|---------|-------|
-| Message size | 128KB |
-| Send buffer | 1MB |
-| Send timeout | 20 seconds |
-
-### Schema Versioning
-
-All WebSocket messages include `schemaVersion` + `eventId` fields for client-side deduplication support.
+MESSAGE · REACTION_ADDED · REACTION_REMOVED · TYPING · STOP_TYPING · READ · MESSAGE_DELETED · MESSAGE_UPDATED · LINK_PREVIEW_UPDATED · USER_LEFT · USER_JOINED
 
 ---
 
-## Security
+## 보안
 
-### Authentication & Authorization
+| 항목 | 구현 |
+|------|------|
+| **인증** | JWT (HMAC-SHA256), Access + Refresh Token |
+| **비밀번호** | BCrypt |
+| **메시지 암호화** | AES-256 at rest |
+| **Rate Limiting** | Bucket4j + Redis (인스턴스 간 공유) |
+| **Actuator** | 민감 엔드포인트 제거 |
 
-| Feature | Implementation |
-|---------|---------------|
-| **JWT** | HMAC-SHA256, Access + Refresh Token |
-| **Password** | BCrypt hashing |
-| **Session** | Stateless (Spring Security) |
-| **Role-Based** | USER / ADMIN roles |
+### Rate Limit
 
-### Data Protection
-
-| Feature | Implementation |
-|---------|---------------|
-| **Message Encryption** | AES-256 at rest (`EncryptedStringConverter`) |
-| **Secrets** | Environment variables (DB_PASSWORD, JWT_SECRET, ENCRYPTION_KEY, MINIO_ACCESS_KEY, MINIO_SECRET_KEY) |
-| **Actuator** | Sensitive endpoints (env, loggers) removed |
-
-### Rate Limiting (Bucket4j + Redis)
-
-| Endpoint | Limit |
-|----------|-------|
-| Login | 5/min |
-| Signup | 3/min |
-| File upload | 10/min + 50/hr |
-
-Rate limit state stored in Redis for consistency across 3 instances.
+| 엔드포인트 | 제한 |
+|------------|------|
+| 로그인 | 5회/분 |
+| 회원가입 | 3회/분 |
+| 파일 업로드 | 10회/분 + 50회/시간 |
 
 ---
 
-## Key Components
+## 캐시 (Redis)
 
-### Caching (RedisCacheManager)
-
-| Cache | TTL |
-|-------|-----|
-| USER | 1 hour |
-| CHAT_ROOM | 30 min |
-| STATISTICS | 5 min |
-
-Redis-backed cache ensures consistency across all 3 application instances.
-
-### File Upload (MinIO)
-
-- S3-compatible object storage (AWS SDK S3 2.25.16)
-- HEIC/HEIF + video MIME types supported
-- Thumbnail generation for images
-- Nginx proxies `/files/` → MinIO (MinIO port not exposed externally)
-
-### Push Notifications (FCM)
-
-- Firebase Admin SDK 9.2.0
-- Device token management per user
-- Firebase App Check for client verification
-
-### Link Preview
-
-- jsoup 1.17.2 for HTML parsing
-- Async link preview extraction on message send
-- Preview data stored on message entity (url, title, description, image)
-
-### Observability
-
-| Tool | Purpose |
-|------|---------|
-| **Micrometer + Prometheus** | Custom metrics: messages, logins, WebSocket connections, Redis pub/delivery |
-| **Micrometer Tracing (Brave)** | Distributed tracing → Zipkin |
-| **Logstash Logback Encoder** | Structured JSON logging → Loki |
+| 캐시 | TTL |
+|------|-----|
+| USER | 1시간 |
+| CHAT_ROOM | 30분 |
+| STATISTICS | 5분 |
 
 ---
 
-## Next
+## 관측성
 
-→ [Frontend Architecture](./frontend)
+| 도구 | 용도 |
+|------|------|
+| Micrometer + Prometheus | 커스텀 메트릭 (메시지, 로그인, WebSocket, Redis) |
+| Micrometer Tracing (Brave) | 분산 추적 → Zipkin |
+| Logstash Logback Encoder | 구조화 JSON 로깅 → Loki |
+
+---
+
+→ [프론트엔드 아키텍처](./frontend)
