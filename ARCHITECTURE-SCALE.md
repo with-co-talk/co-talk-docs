@@ -109,105 +109,136 @@ description: Co-Talk 대규모 트래픽 아키텍처 문서
 
 ### 3.1 전체 아키텍처 다이어그램
 
-```
-                    ┌─────────────┐
-                    │   CDN       │
-                    │  (CloudFlare)│
-                    └──────┬──────┘
-                           │
-                    ┌──────▼────────────────────────────┐
-                    │      Load Balancer (ALB/NLB)      │
-                    │      - SSL Termination            │
-                    │      - Health Check               │
-                    └──────┬────────────────────────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-┌───────▼──────┐  ┌────────▼────────┐  ┌─────▼──────┐
-│  API Gateway │  │  WebSocket      │  │  API       │
-│  (Kong/     │  │  Gateway        │  │  Servers   │
-│   AWS API)  │  │  (Netty/        │  │  (Spring)  │
-│              │  │   Spring WS)    │  │            │
-└───────┬──────┘  └────────┬────────┘  └─────┬──────┘
-        │                  │                  │
-        └──────────────────┼──────────────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-┌───────▼──────┐  ┌────────▼────────┐  ┌─────▼──────┐
-│   Redis      │  │   Redis        │  │  Redis    │
-│  (Cache)     │  │  (Pub/Sub)     │  │  (Session) │
-│              │  │  (Message Queue)│  │            │
-└───────┬──────┘  └────────┬────────┘  └─────┬──────┘
-        │                  │                  │
-        └──────────────────┼──────────────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-┌───────▼──────┐  ┌────────▼────────┐  ┌─────▼──────┐
-│ PostgreSQL   │  │  PostgreSQL     │  │ PostgreSQL │
-│ (Primary)    │  │  (Read Replica) │  │ (Read      │
-│              │  │                 │  │  Replica)  │
-└──────────────┘  └─────────────────┘  └────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │  Elasticsearch│
-                    │  (Message     │
-                    │   Search)     │
-                    └───────────────┘
+```plantuml
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 11
+skinparam componentStyle rectangle
+skinparam ArrowColor #333333
+top to bottom direction
+
+title Co-Talk 인프라 아키텍처
+
+rectangle "Edge" {
+  component [CDN\n(CloudFlare)] as CDN
+}
+
+rectangle "Load Balancing" {
+  component [Load Balancer\n(ALB/NLB)\n- SSL Termination\n- Health Check] as LB
+}
+
+rectangle "Application Layer" {
+  component [API Gateway\n(Kong / AWS API)] as APIGW
+  component [WebSocket Gateway\n(Netty / Spring WS)] as WSGW
+  component [API Servers\n(Spring)] as API
+}
+
+rectangle "Cache & Messaging" {
+  component [Redis\n(Cache)] as RedisCache
+  component [Redis\n(Pub/Sub)\n(Message Queue)] as RedisPubSub
+  component [Redis\n(Session)] as RedisSession
+}
+
+rectangle "Data Layer" {
+  component [PostgreSQL\n(Primary)] as PgPrimary
+  component [PostgreSQL\n(Read Replica)] as PgReplica1
+  component [PostgreSQL\n(Read Replica)] as PgReplica2
+}
+
+rectangle "Search" {
+  component [Elasticsearch\n(Message Search)] as ES
+}
+
+CDN -down-> LB
+LB -down-> APIGW
+LB -down-> WSGW
+LB -down-> API
+
+APIGW -down-> RedisCache
+WSGW -down-> RedisPubSub
+API -down-> RedisSession
+
+APIGW -down-> PgPrimary
+WSGW -down-> PgReplica1
+API -down-> PgReplica2
+
+PgPrimary -right-> PgReplica1 : replication
+PgPrimary -right-> PgReplica2 : replication
+
+PgPrimary -down-> ES
+PgReplica1 -down-> ES
+PgReplica2 -down-> ES
+
+@enduml
 ```
 
 ### 3.2 마이크로서비스 아키텍처
 
-```
-┌─────────────────────────────────────────────────────┐
-│              API Gateway (Kong/AWS API Gateway)     │
-└────────┬────────────────────────────────────────────┘
-         │
-    ┌────┴─────────────────────────────────────┐
-    │                                           │
-┌───▼──────────┐  ┌──────────────┐  ┌──────────▼───┐
-│ Auth Service │  │ User Service │  │ Friend Service│
-│ (Spring)     │  │ (Spring)     │  │ (Spring)     │
-└──────────────┘  └──────────────┘  └──────────────┘
-    │                                           │
-┌───▼──────────┐  ┌──────────────┐  ┌──────────▼───┐
-│ Chat Service │  │ Message      │  │ Notification  │
-│ (Spring WS)  │  │ Service      │  │ Service      │
-│              │  │ (Spring)     │  │ (Spring)     │
-└──────────────┘  └──────────────┘  └──────────────┘
+```plantuml
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+top to bottom direction
+
+title 마이크로서비스 아키텍처
+
+rectangle "API Gateway (Kong / AWS API Gateway)" as APIGW
+
+rectangle "Services" {
+  component [Auth Service\n(Spring)] as Auth
+  component [User Service\n(Spring)] as User
+  component [Friend Service\n(Spring)] as Friend
+  component [Chat Service\n(Spring WS)] as Chat
+  component [Message Service\n(Spring)] as Message
+  component [Notification Service\n(Spring)] as Notif
+}
+
+APIGW -down-> Auth
+APIGW -down-> User
+APIGW -down-> Friend
+APIGW -down-> Chat
+APIGW -down-> Message
+APIGW -down-> Notif
+
+@enduml
 ```
 
 ### 3.3 실시간 메시징 아키텍처
 
-```
-┌──────────────┐
-│   Client 1   │
-└──────┬───────┘
-       │ WebSocket
-       │
-┌──────▼─────────────────────────────────────┐
-│  WebSocket Gateway (Netty/Spring WS)       │
-│  - Connection Management                    │
-│  - Message Routing                          │
-└──────┬─────────────────────────────────────┘
-       │
-       │ Redis Pub/Sub
-       │
-┌──────▼─────────────────────────────────────┐
-│  Message Broker (Redis Pub/Sub)             │
-│  - Channel per ChatRoom                     │
-│  - Message Distribution                     │
-└──────┬─────────────────────────────────────┘
-       │
-┌──────▼─────────────────────────────────────┐
-│  WebSocket Gateway Instances (Multiple)     │
-│  - Instance 1, 2, 3...                      │
-└──────┬─────────────────────────────────────┘
-       │
-┌──────▼──────┐
-│   Client 2   │
-└─────────────┘
+```plantuml
+@startuml
+!theme plain
+skinparam backgroundColor #FEFEFE
+top to bottom direction
+
+title 실시간 메시징 아키텍처
+
+actor "Client 1" as C1
+actor "Client 2" as C2
+
+rectangle "WebSocket Gateway\n(Netty / Spring WS)" as WSGW {
+  note right
+    - Connection Management
+    - Message Routing
+  end note
+}
+
+rectangle "Message Broker\n(Redis Pub/Sub)" as Broker {
+  note right
+    - Channel per ChatRoom
+    - Message Distribution
+  end note
+}
+
+rectangle "WebSocket Gateway Instances\n(Instance 1, 2, 3...)" as WSGW2
+
+C1 -down-> WSGW : WebSocket
+WSGW -down-> Broker : Redis Pub/Sub
+Broker -down-> WSGW2
+WSGW2 -down-> C2 : WebSocket
+
+@enduml
 ```
 
 ---

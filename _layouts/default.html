@@ -159,7 +159,7 @@
     <!-- Initialize Mermaid -->
     <script>
       mermaid.initialize({ 
-        startOnLoad: true,
+        startOnLoad: false,
         theme: 'neutral',
         themeVariables: {
           primaryColor: '#e8e8e8',
@@ -169,6 +169,17 @@
           secondaryColor: '#f4f4f4',
           tertiaryColor: '#fff'
         }
+      });
+      document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('pre code.language-mermaid').forEach(function(block) {
+          var div = document.createElement('div');
+          div.className = 'mermaid';
+          div.textContent = block.textContent;
+          block.closest('pre').replaceWith(div);
+        });
+        mermaid.run().catch(function(e) {
+          console.error('Mermaid 렌더링 실패:', e);
+        });
       });
     </script>
     
