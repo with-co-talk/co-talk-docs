@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nrefactor: 문서 구조 개선 - 페이지 분리 및 목차 추가\n\n- 긴 단일 문서들을 폴더별로 분리하여 가독성 향상\n- 각 문서에 목차\\(TOC\\) 추가\n- 트리 형태 네비게이션으로 탐색 용이\n\n변경 내용:\n- architecture/: 백엔드, 프론트엔드, DB, API, 인프라 분리\n- tech-stack/: 백엔드, 프론트엔드, 인프라 기술 분리\n- decisions/: ADR 문서들 정리\n- guides/: 가이드 문서 정리\n- index.md: 새 구조에 맞게 네비게이션 업데이트\n- _config.yml: 상단 메뉴 업데이트\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfix: 사이드바 네비게이션 링크 수정\n\n새로운 폴더 구조에 맞게 사이드바 링크 업데이트:\n- architecture/ 하위 문서 링크\n- tech-stack/ 하위 문서 링크\n- decisions/ 하위 문서 링크\n- guides/ 하위 문서 링크\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)"
+    ]
+  }
+}
